@@ -35,6 +35,8 @@ namespace gr {
       int d_seq_len;
       int d_lookahead;
 
+      pmt::pmt_t d_tag_key;
+
       struct {
         uint64_t id;
         bool am_inside;
@@ -44,7 +46,7 @@ namespace gr {
       } d_peak;
 
     public:
-      sc_tagger_impl(float thres_low, float thres_high, int seq_len);
+      sc_tagger_impl(float thres_low, float thres_high, int seq_len, const std::string &tag_key);
       ~sc_tagger_impl();
 
       int work(int noutput_items,

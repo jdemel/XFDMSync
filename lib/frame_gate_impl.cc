@@ -143,7 +143,7 @@ namespace gr {
       const int out_len= noutput_items;
 
       std::vector<tag_t> tags;
-      get_tags_in_window(tags, 0, 0, in_len, pmt::mp("preamble_start"));
+      get_tags_in_window(tags, 0, 0, in_len, pmt::mp("frame_start"));
 
       int in_idx= 0;
       int out_idx= 0;

@@ -4,7 +4,7 @@
   <key>xfdm_sync_sc_tagger</key>
   <category>[xfdm_sync]</category>
   <import>import xfdm_sync</import>
-  <make>xfdm_sync.sc_tagger($thres_low, $thres_high, $seq_len)</make>
+  <make>xfdm_sync.sc_tagger($thres_low, $thres_high, $seq_len, $tag_key)</make>
 
   <param>
     <name>Lower Threshold</name>
@@ -22,6 +22,12 @@
     <name>Sequence length</name>
     <key>seq_len</key>
     <type>int</type>
+  </param>
+
+  <param>
+    <name>Tag Key</name>
+    <key>tag_key</key>
+    <type>string</type>
   </param>
 
   <sink>

@@ -4,7 +4,7 @@
   <key>xfdm_sync_xcorr_tagger</key>
   <category>[xfdm_sync]</category>
   <import>import xfdm_sync</import>
-  <make>xfdm_sync.xcorr_tagger($threshold, $sync_sequence, $use_sc_rot)</make>
+  <make>xfdm_sync.xcorr_tagger($threshold, $sync_sequence, $use_sc_rot, $tag_key)</make>
 
   <param>
     <name>Detection threshold</name>
@@ -22,6 +22,12 @@
     <name>Frequency compensate</name>
     <key>use_sc_rot</key>
     <type>bool</type>
+  </param>
+
+  <param>
+    <name>Tag Key</name>
+    <key>tag_key</key>
+    <type>string</type>
   </param>
 
   <sink>

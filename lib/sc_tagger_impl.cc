@@ -29,12 +29,12 @@ namespace gr {
   namespace xfdm_sync {
 
     sc_tagger::sptr
-    sc_tagger::make(float thres_low, float thres_high, int seq_len)
+    sc_tagger::make(float thres_low, float thres_high, int seq_len, const std::string &tag_key)
     {
-      return gnuradio::get_initial_sptr(new sc_tagger_impl(thres_low, thres_high, seq_len));
+      return gnuradio::get_initial_sptr(new sc_tagger_impl(thres_low, thres_high, seq_len, tag_key));
     }
 
-    sc_tagger_impl::sc_tagger_impl(float thres_low, float thres_high, int seq_len)
+    sc_tagger_impl::sc_tagger_impl(float thres_low, float thres_high, int seq_len, const std::string &tag_key)
       : gr::sync_block("sc_tagger",
                        gr::io_signature::make(2, 2, sizeof(gr_complex)),
                        gr::io_signature::make(2, 2, sizeof(gr_complex))),
@@ -49,6 +49,13 @@ namespace gr {
 
       d_peak.id= 0;
       d_peak.am_inside= false;
+
+      if(tag_key.empty()){
+        d_tag_key = pmt::string_to_symbol("frame_start");
+      }
+      else{
+        d_tag_key = pmt::string_to_symbol(tag_key);
+      }
     }
 
     sc_tagger_impl::~sc_tagger_impl()
@@ -98,7 +105,7 @@ namespace gr {
                               pmt::from_uint64(d_peak.id));
 
           add_item_tag(0, d_peak.abs_idx,
-                       pmt::mp("preamble_start"),
+                       d_tag_key,
                        info);
 
           d_peak.id++;

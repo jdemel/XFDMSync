@@ -1,4 +1,4 @@
 *~
-
+*.pyc
 /examples/top_block.py
 /build

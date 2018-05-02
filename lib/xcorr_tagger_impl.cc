@@ -31,22 +31,25 @@ namespace gr {
   namespace xfdm_sync {
 
     xcorr_tagger::sptr
-    xcorr_tagger::make(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot)
+    xcorr_tagger::make(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key)
     {
-      return gnuradio::get_initial_sptr(new xcorr_tagger_impl(threshold, sync_sequence, use_sc_rot));
+      return gnuradio::get_initial_sptr(new xcorr_tagger_impl(threshold, sync_sequence, use_sc_rot, tag_key));
     }
 
-    xcorr_tagger_impl::xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot)
+    xcorr_tagger_impl::xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key)
       : gr::sync_block("xcorr_tagger",
                        gr::io_signature::make(2, 2, sizeof(gr_complex)),
                        gr::io_signature::make(2, 2, sizeof(gr_complex))),
       d_threshold(threshold),
       d_peak_idx(0),
-      d_use_sc_rot(use_sc_rot)
+      d_use_sc_rot(use_sc_rot),
+      d_sync_seq_len(sync_sequence.size()),
+      d_scale_factor(1.0f)
     {
       set_tag_propagation_policy(TPP_DONT);
 
-      int seq_len= sync_sequence.size();
+      int seq_len = sync_sequence.size();
+      d_reference_preamble_energy = calculate_signal_energy(&sync_sequence[0], seq_len);
 
       /* Find a power-of-two fft length that can fit
        * the synchronization pattern, an equally sized
@@ -82,6 +85,13 @@ namespace gr {
       /* Clear the input buffer.
        * It will be assumed to be zeroed later */
       memset(fwd_in, 0, sizeof(gr_complex) * d_fft_len);
+
+      if(tag_key.empty()){
+        d_tag_key = pmt::string_to_symbol("frame_start");
+      }
+      else{
+        d_tag_key = pmt::string_to_symbol(tag_key);
+      }
     }
 
     xcorr_tagger_impl::~xcorr_tagger_impl()
@@ -90,6 +100,20 @@ namespace gr {
       delete d_fft_fwd;
 
       volk_free(d_sequence_fq);
+    }
+
+    float
+    xcorr_tagger_impl::calculate_signal_energy(const gr_complex* p_in, const int ninput_size)
+    {
+      gr_complex energy = gr_complex(0.0, 0.0);
+      volk_32fc_x2_conjugate_dot_prod_32fc(&energy, p_in, p_in, ninput_size);
+      return energy.real();
+    }
+
+    float
+    xcorr_tagger_impl::calculate_preamble_attenuation(const gr_complex* p_in)
+    {
+      return std::sqrt(d_reference_preamble_energy / calculate_signal_energy(p_in, d_sync_seq_len));
     }
 
     int
@@ -119,7 +143,7 @@ namespace gr {
 
       get_tags_in_range(tags, 0,
                         tag_reg_start, tag_reg_end,
-                        pmt::mp("preamble_start"));
+                        d_tag_key);
 
       for(tag_t tag: tags) {
         int tag_center= tag.offset + history() - nitems_read(0);
@@ -127,7 +151,7 @@ namespace gr {
         const int fft_payload_len= d_fft_len/2;
         const int fft_payload_half_len= fft_payload_len/2;
 
-        pmt::pmt_t info= tag.value;
+        pmt::pmt_t info = tag.value;
 
         gr_complex *fwd_in= d_fft_fwd->get_inbuf();
         gr_complex *fwd_out= d_fft_fwd->get_outbuf();
@@ -228,6 +252,18 @@ namespace gr {
         peak_idx_rel-= fft_payload_half_len;
 
         if(rel_power > d_threshold) {
+          const int64_t peak_offset = (int64_t)(tag.offset + d_fft_len/4) + peak_idx_rel;
+          const int64_t frame_buffer_start = peak_offset - nitems_written(0);
+
+          // make sure sure we don't read from invalid memory!
+          if(frame_buffer_start >= 0 and frame_buffer_start + d_sync_seq_len <= noutput_items){
+            d_scale_factor = calculate_preamble_attenuation(out_pass + frame_buffer_start);
+          }
+
+          info= pmt::dict_add(info,
+                              pmt::mp("scale_factor"),
+                              pmt::from_double(d_scale_factor));
+
           info= pmt::dict_add(info,
                               pmt::mp("xcorr_power"),
                               pmt::from_double(power));
@@ -248,8 +284,8 @@ namespace gr {
                               pmt::mp("sc_offset"),
                               pmt::from_uint64(tag.offset));
 
-          add_item_tag(0, (int64_t)(tag.offset + d_fft_len/4) + peak_idx_rel,
-                       pmt::mp("preamble_start"),
+          add_item_tag(0, peak_offset,
+                       d_tag_key,
                        info);
 
           d_peak_idx++;

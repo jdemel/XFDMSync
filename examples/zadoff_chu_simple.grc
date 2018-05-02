@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.11'?>
+<?grc format='1' created='3.7.12'?>
 <flow_graph>
   <timestamp>Sun Jul 16 13:31:38 2017</timestamp>
   <block>
@@ -89,6 +89,96 @@
     </param>
     <param>
       <key>value</key>
+      <value>1.</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(672, 28)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value>4,2,1,1</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>ampl</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value>RX amplitude</value>
+    </param>
+    <param>
+      <key>min_len</key>
+      <value>200</value>
+    </param>
+    <param>
+      <key>orient</key>
+      <value>Qt.Horizontal</value>
+    </param>
+    <param>
+      <key>start</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>step</key>
+      <value>0.1e-3</value>
+    </param>
+    <param>
+      <key>stop</key>
+      <value>10.</value>
+    </param>
+    <param>
+      <key>rangeType</key>
+      <value>float</value>
+    </param>
+    <param>
+      <key>widget</key>
+      <value>counter_slider</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1232, 76)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>chan_taps</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>[1. + 1.j, .5 - .0j]</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_qtgui_range</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>value</key>
       <value>1e-3</value>
     </param>
     <param>
@@ -101,7 +191,7 @@
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>4,1,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -113,7 +203,7 @@
     </param>
     <param>
       <key>label</key>
-      <value></value>
+      <value>F Offset</value>
     </param>
     <param>
       <key>min_len</key>
@@ -160,11 +250,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(391, 27)</value>
+      <value>(400, 28)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>4,0,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -176,7 +266,7 @@
     </param>
     <param>
       <key>label</key>
-      <value></value>
+      <value>Noise</value>
     </param>
     <param>
       <key>min_len</key>
@@ -219,7 +309,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(23, 91)</value>
+      <value>(48, 124)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -246,7 +336,34 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(135, 91)</value>
+      <value>(1088, 76)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>sync_key</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>"fstr"</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(168, 124)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -259,6 +376,112 @@
     <param>
       <key>value</key>
       <value>((1+0j), (0.38268343236509+0.92387953251128663j), (0.47139673682599736+0.88192126434835516j), (0.95694033573220838-0.29028467725446411j), (-0.9807852804032311-0.19509032201612519j), (0.83146961230254324-0.55557023301960518j), (0.8819212643483566+0.47139673682599476j), (0.95694033573221149+0.29028467725445356j), (0.38268343236508312-0.92387953251128951j), (-0.70710678118654946+0.70710678118654557j), (-0.098017140329568431-0.99518472667219615j), (0.77301045336273033-0.63439328416365359j), (0.55557023301959785-0.83146961230254812j), (-0.83146961230254079-0.55557023301960895j), (0.63439328416366692+0.77301045336271945j), (-0.99518472667219426+0.098017140329587457j), (-0.70710678118656056-0.70710678118653458j), (-0.92387953251127664-0.38268343236511432j), (-0.29028467725445684+0.9569403357322106j), (0.47139673682599603-0.88192126434835594j), (0.5555702330196175+0.83146961230253502j), (-0.19509032201612977+0.9807852804032301j), (0.2902846772545159+0.95694033573219262j), (0.8819212643483455-0.47139673682601552j), (-0.92387953251128485+0.38268343236509444j), (-1.029755578365977e-14-1j), (0.63439328416366159-0.77301045336272378j), (0.098017140329535263-0.99518472667219937j), (-0.98078528040320134+0.19509032201627444j), (0.98078528040320656-0.19509032201624849j), (-0.098017140329501123+0.9951847266722027j), (-0.63439328416358809+0.77301045336278407j), (5.2443975093426368e-14+1j), (0.92387953251128896-0.38268343236508445j), (-0.88192126434834872+0.47139673682600947j), (-0.29028467725445872-0.95694033573220993j), (0.19509032201618454-0.98078528040321922j), (-0.55557023301976338-0.83146961230243754j), (-0.47139673682593813+0.8819212643483868j), (0.29028467725433582-0.95694033573224724j), (0.92387953251134824+0.3826834323649414j), (0.70710678118665549+0.70710678118643955j), (0.99518472667218627-0.09801714032966842j), (-0.63439328416366692-0.77301045336271945j), (0.83146961230262195+0.55557023301948749j), (-0.55557023301942599+0.83146961230266303j), (-0.77301045336272278+0.6343932841636627j), (0.098017140329584057+0.9951847266721946j), (0.70710678118655568-0.70710678118653936j), (-0.38268343236495633+0.92387953251134203j), (-0.95694033573221948-0.29028467725442725j), (-0.88192126434841156-0.47139673682589189j), (-0.83146961230257888+0.55557023301955188j), (0.98078528040326507+0.19509032201595433j), (-0.95694033573223092+0.29028467725438978j), (-0.47139673682607647-0.88192126434831286j), (-0.38268343236550145-0.92387953251111621j), (-1+8.3336642444405675e-14j), (0.7730104533629697+0.63439328416336194j), (-0.99518472667219016-0.098017140329628383j), (-0.19509032201626822-0.98078528040320256j), (-0.19509032201621632-0.98078528040321289j), (-0.99518472667221924-0.098017140329333827j), (0.77301045336280183+0.63439328416356644j))</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_multiply_const_vxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>const</key>
+      <value>ampl</value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(920, 228)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_multiply_const_vxx_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_tag_debug</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>display</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(944, 484)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_tag_debug_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>filter</key>
+      <value>""</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value></value>
+    </param>
+    <param>
+      <key>num_inputs</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -281,7 +504,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(407, 179)</value>
+      <value>(416, 228)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -336,7 +559,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(207, 163)</value>
+      <value>(216, 212)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -391,7 +614,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(31, 163)</value>
+      <value>(40, 212)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -462,7 +685,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(687, 147)</value>
+      <value>(704, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -490,7 +713,38 @@
     </param>
     <param>
       <key>taps</key>
-      <value>1.0 + 1.0j</value>
+      <value>chan_taps / np.sqrt(np.linalg.norm(chan_taps))</value>
+    </param>
+  </block>
+  <block>
+    <key>import</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(208, 28)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>import_numpy</value>
+    </param>
+    <param>
+      <key>import</key>
+      <value>import numpy as np</value>
     </param>
   </block>
   <block>
@@ -529,11 +783,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(936, 340)</value>
+      <value>(944, 380)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>2,0,2,3</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -793,7 +1047,7 @@
     </param>
     <param>
       <key>name</key>
-      <value>""</value>
+      <value>"Synced"</value>
     </param>
     <param>
       <key>nconnections</key>
@@ -829,7 +1083,7 @@
     </param>
     <param>
       <key>tr_tag</key>
-      <value>"preamble_start"</value>
+      <value>sync_key</value>
     </param>
     <param>
       <key>type</key>
@@ -892,11 +1146,11 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(704, 496)</value>
+      <value>(712, 544)</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value></value>
+      <value>0,0,2,3</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1156,7 +1410,7 @@
     </param>
     <param>
       <key>name</key>
-      <value>""</value>
+      <value>"SC vs Source"</value>
     </param>
     <param>
       <key>nconnections</key>
@@ -1239,7 +1493,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(56, 344)</value>
+      <value>(64, 392)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1286,7 +1540,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 340)</value>
+      <value>(304, 380)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1313,6 +1567,10 @@
       <value>len(sync_seq)</value>
     </param>
     <param>
+      <key>tag_key</key>
+      <value>sync_key</value>
+    </param>
+    <param>
       <key>thres_high</key>
       <value>0.7</value>
     </param>
@@ -1333,7 +1591,7 @@
     </param>
     <param>
       <key>threshold</key>
-      <value>100</value>
+      <value>100.</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -1345,7 +1603,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(688, 340)</value>
+      <value>(688, 380)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1367,7 +1625,17 @@
       <key>sync_sequence</key>
       <value>sync_seq * 2 </value>
     </param>
+    <param>
+      <key>tag_key</key>
+      <value>sync_key</value>
+    </param>
   </block>
+  <connection>
+    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
+    <sink_block_id>xfdm_sync_sc_delay_corr_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
   <connection>
     <source_block_id>blocks_throttle_0</source_block_id>
     <sink_block_id>channels_channel_model_0</sink_block_id>
@@ -1394,7 +1662,7 @@
   </connection>
   <connection>
     <source_block_id>channels_channel_model_0</source_block_id>
-    <sink_block_id>xfdm_sync_sc_delay_corr_0</sink_block_id>
+    <sink_block_id>blocks_multiply_const_vxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -1439,6 +1707,12 @@
     <sink_block_id>qtgui_time_sink_x_0_0</sink_block_id>
     <source_key>1</source_key>
     <sink_key>1</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>xfdm_sync_xcorr_tagger_0</source_block_id>
+    <sink_block_id>blocks_tag_debug_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>xfdm_sync_xcorr_tagger_0</source_block_id>

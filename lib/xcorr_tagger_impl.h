@@ -35,12 +35,20 @@ namespace gr {
       uint64_t d_peak_idx;
       bool d_use_sc_rot;
       int d_fft_len;
+      int d_sync_seq_len;
+      float d_reference_preamble_energy;
+      float d_scale_factor;
+
+      pmt::pmt_t d_tag_key;
 
       gr::fft::fft_complex *d_fft_fwd;
       gr::fft::fft_complex *d_fft_rwd;
 
+      float calculate_signal_energy(const gr_complex* p_in, const int ninput_size);
+      float calculate_preamble_attenuation(const gr_complex* p_in);
+
     public:
-      xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot);
+      xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key="frame_start");
       ~xcorr_tagger_impl();
 
       int work(int noutput_items,
