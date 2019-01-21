@@ -78,7 +78,7 @@ namespace gr {
 
       /* Elements in the history will be referred to
        * using negative indices */
-      const gr_complex *in= &in_history[history() - 1];
+      const gr_complex *in = &in_history[history() - 1];
 
       /* Output the delayed input stream */
       memcpy(out_pass, &in[-d_seq_len * 2], sizeof(gr_complex) * noutput_items);

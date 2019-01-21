@@ -39,12 +39,18 @@ namespace gr {
     xcorr_tagger_impl::xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key)
       : gr::sync_block("xcorr_tagger",
                        gr::io_signature::make(2, 2, sizeof(gr_complex)),
-                       gr::io_signature::make(2, 2, sizeof(gr_complex))),
+                       gr::io_signature::make(1, 2, sizeof(gr_complex))),
       d_threshold(threshold),
       d_peak_idx(0),
       d_use_sc_rot(use_sc_rot),
       d_sync_seq_len(sync_sequence.size()),
-      d_scale_factor(1.0f)
+      d_scale_factor(1.0f),
+      d_scale_factor_key(pmt::mp("scale_factor")),
+      d_correlation_power_key(pmt::mp("xcorr_power")),
+      d_relative_correlation_power_key(pmt::mp("xcorr_rel_power")),
+      d_rotation_key(pmt::mp("xcorr_rot")),
+      d_index_key(pmt::mp("xcorr_idx")),
+      d_sc_offset_key(pmt::mp("sc_offset"))
     {
       set_tag_propagation_policy(TPP_DONT);
 
@@ -116,6 +122,31 @@ namespace gr {
       return std::sqrt(d_reference_preamble_energy / calculate_signal_energy(p_in, d_sync_seq_len));
     }
 
+    void
+    xcorr_tagger_impl::update_peak_tag(pmt::pmt_t &info, const float scale_factor,
+                                       const float power, const float rel_power,
+                                       const gr_complex rotation,
+                                       const uint64_t idx, const uint64_t sc_offset)
+    {
+      info = pmt::dict_add(info, d_scale_factor_key,
+                           pmt::from_double(scale_factor));
+
+      info = pmt::dict_add(info, d_correlation_power_key,
+                           pmt::from_double(power));
+
+      info = pmt::dict_add(info, d_relative_correlation_power_key,
+                           pmt::from_double(rel_power));
+
+      info = pmt::dict_add(info, d_rotation_key,
+                           pmt::from_complex(rotation));
+
+      info = pmt::dict_add(info, d_index_key,
+                           pmt::from_uint64(idx));
+
+      info = pmt::dict_add(info, d_sc_offset_key,
+                           pmt::from_uint64(sc_offset));
+    }
+
     int
     xcorr_tagger_impl::work(int noutput_items,
                             gr_vector_const_void_star &input_items,
@@ -124,7 +155,7 @@ namespace gr {
       const gr_complex *in_pass_history = (const gr_complex *) input_items[0];
       const gr_complex *in_corr_history = (const gr_complex *) input_items[1];
       gr_complex *out_pass = (gr_complex *) output_items[0];
-      gr_complex *out_corr = (gr_complex *) output_items[1];
+      //gr_complex *out_corr = (gr_complex *) output_items[1];
 
       /* The history is d_fft_len/2 samples long.
        * The indexing done below allows us to read in_pass and in_corr
@@ -134,7 +165,10 @@ namespace gr {
       const gr_complex *in_corr= &in_corr_history[block_delay];
 
       memcpy(out_pass, in_pass, sizeof(gr_complex) * noutput_items);
-      memcpy(out_corr, in_corr, sizeof(gr_complex) * noutput_items);
+      if(output_items.size() > 1){
+        gr_complex *out_corr = (gr_complex *) output_items[1];
+        memcpy(out_corr, in_corr, sizeof(gr_complex) * noutput_items);
+      }
 
       std::vector<tag_t> tags;
 
@@ -260,33 +294,11 @@ namespace gr {
             d_scale_factor = calculate_preamble_attenuation(out_pass + frame_buffer_start);
           }
 
-          info= pmt::dict_add(info,
-                              pmt::mp("scale_factor"),
-                              pmt::from_double(d_scale_factor));
+          update_peak_tag(info, d_scale_factor, power, rel_power,
+                          peak / std::abs(peak), d_peak_idx,
+                          tag.offset);
 
-          info= pmt::dict_add(info,
-                              pmt::mp("xcorr_power"),
-                              pmt::from_double(power));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("xcorr_rel_power"),
-                              pmt::from_double(rel_power));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("xcorr_rot"),
-                              pmt::from_complex(peak / std::abs(peak)));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("xcorr_idx"),
-                              pmt::from_uint64(d_peak_idx));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("sc_offset"),
-                              pmt::from_uint64(tag.offset));
-
-          add_item_tag(0, peak_offset,
-                       d_tag_key,
-                       info);
+          add_item_tag(0, peak_offset, d_tag_key, info);
 
           d_peak_idx++;
         }

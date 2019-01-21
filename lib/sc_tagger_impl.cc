@@ -41,7 +41,10 @@ namespace gr {
       d_thres_low_sq(thres_low * thres_low),
       d_thres_high_sq(thres_high * thres_high),
       d_seq_len(seq_len),
-      d_lookahead(2*seq_len)
+      d_lookahead(2*seq_len),
+      d_correlation_power_key(pmt::mp("sc_corr_power")),
+      d_symbol_rotation_key(pmt::mp("sc_rot")),
+      d_index_key(pmt::mp("sc_idx"))
     {
       set_tag_propagation_policy(TPP_DONT);
 
@@ -62,6 +65,26 @@ namespace gr {
     {
     }
 
+    pmt::pmt_t
+    sc_tagger_impl::make_peak_tag(const double corr_power,
+                             const gr_complex rot_per_sym,
+                             const uint64_t idx)
+    {
+      pmt::pmt_t info = pmt::make_dict();
+      info = pmt::dict_add(info,
+                           d_correlation_power_key,
+                           pmt::from_double(corr_power));
+
+      info = pmt::dict_add(info,
+                           d_symbol_rotation_key,
+                           pmt::from_complex(rot_per_sym));
+
+      info = pmt::dict_add(info,
+                           d_index_key,
+                           pmt::from_uint64(idx));
+      return info;
+    }
+
     int
     sc_tagger_impl::work(int noutput_items,
                          gr_vector_const_void_star &input_items,
@@ -79,30 +102,19 @@ namespace gr {
       memcpy(out_pass, &in_pass[-d_lookahead], sizeof(gr_complex) * noutput_items);
       memcpy(out_corr, &in_corr[-d_lookahead], sizeof(gr_complex) * noutput_items);
 
-      for(int io_idx= 0; io_idx<noutput_items; io_idx++) {
+      for(int io_idx = 0; io_idx < noutput_items; io_idx++) {
         gr_complex corr= in_corr[io_idx];
         float power_sq= std::norm(corr);
 
         /* check if we left the peak with the current sample */
         if(d_peak.am_inside && (power_sq < d_thres_low_sq)) {
-          d_peak.am_inside= false;
+          d_peak.am_inside = false;
 
-          float corr_power= std::sqrt(d_peak.corr_pw_sq);
-          gr_complex rot_per_sym= std::pow(d_peak.corr, 1.0f / d_seq_len);
-          rot_per_sym/= std::abs(rot_per_sym);
+          float corr_power = std::sqrt(d_peak.corr_pw_sq);
+          gr_complex rot_per_sym = std::pow(d_peak.corr, 1.0f / d_seq_len);
+          rot_per_sym /= std::abs(rot_per_sym);
 
-          pmt::pmt_t info= pmt::make_dict();
-          info= pmt::dict_add(info,
-                              pmt::mp("sc_corr_power"),
-                              pmt::from_double(corr_power));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("sc_rot"),
-                              pmt::from_complex(rot_per_sym));
-
-          info= pmt::dict_add(info,
-                              pmt::mp("sc_idx"),
-                              pmt::from_uint64(d_peak.id));
+          auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);
 
           add_item_tag(0, d_peak.abs_idx,
                        d_tag_key,

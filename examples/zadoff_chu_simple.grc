@@ -21,6 +21,10 @@
       <value></value>
     </param>
     <param>
+      <key>copyright</key>
+      <value></value>
+    </param>
+    <param>
       <key>description</key>
       <value></value>
     </param>
@@ -73,12 +77,20 @@
       <value>True</value>
     </param>
     <param>
+      <key>sizing_mode</key>
+      <value>fixed</value>
+    </param>
+    <param>
       <key>thread_safe_setters</key>
       <value></value>
     </param>
     <param>
       <key>title</key>
       <value></value>
+    </param>
+    <param>
+      <key>placement</key>
+      <value>(0,0)</value>
     </param>
   </block>
   <block>
@@ -717,6 +729,69 @@
     </param>
   </block>
   <block>
+    <key>hier_multicarrier_sync</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>output_tag_key</key>
+      <value>sync_key</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(256, 528)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>hier_multicarrier_sync_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>ref_preamble</key>
+      <value>2 * sync_seq</value>
+    </param>
+    <param>
+      <key>sc_high_thr</key>
+      <value>.7</value>
+    </param>
+    <param>
+      <key>sc_low_thr</key>
+      <value>.6</value>
+    </param>
+    <param>
+      <key>xcorr_det_thr</key>
+      <value>100.</value>
+    </param>
+    <param>
+      <key>xcorr_comp_freq</key>
+      <value>True</value>
+    </param>
+  </block>
+  <block>
     <key>import</key>
     <param>
       <key>alias</key>
@@ -1060,6 +1135,10 @@
     <param>
       <key>srate</key>
       <value>samp_rate</value>
+    </param>
+    <param>
+      <key>stemplot</key>
+      <value>False</value>
     </param>
     <param>
       <key>tr_chan</key>
@@ -1425,6 +1504,10 @@
       <value>samp_rate</value>
     </param>
     <param>
+      <key>stemplot</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>tr_chan</key>
       <value>2</value>
     </param>
@@ -1603,7 +1686,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(688, 380)</value>
+      <value>(680, 380)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1630,6 +1713,12 @@
       <value>sync_key</value>
     </param>
   </block>
+  <connection>
+    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
+    <sink_block_id>hier_multicarrier_sync_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
   <connection>
     <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
     <sink_block_id>xfdm_sync_sc_delay_corr_0</sink_block_id>
@@ -1663,6 +1752,12 @@
   <connection>
     <source_block_id>channels_channel_model_0</source_block_id>
     <sink_block_id>blocks_multiply_const_vxx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>hier_multicarrier_sync_0</source_block_id>
+    <sink_block_id>blocks_tag_debug_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -1707,12 +1802,6 @@
     <sink_block_id>qtgui_time_sink_x_0_0</sink_block_id>
     <source_key>1</source_key>
     <sink_key>1</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>xfdm_sync_xcorr_tagger_0</source_block_id>
-    <sink_block_id>blocks_tag_debug_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>xfdm_sync_xcorr_tagger_0</source_block_id>

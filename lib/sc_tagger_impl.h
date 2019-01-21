@@ -37,6 +37,13 @@ namespace gr {
 
       pmt::pmt_t d_tag_key;
 
+      const pmt::pmt_t d_correlation_power_key;
+      const pmt::pmt_t d_symbol_rotation_key;
+      const pmt::pmt_t d_index_key;
+      pmt::pmt_t make_peak_tag(const double corr_power,
+                               const gr_complex rot_per_sym,
+                               const uint64_t idx);
+
       struct {
         uint64_t id;
         bool am_inside;

@@ -48,5 +48,6 @@
     <source>
     <name>out_corr</name>
     <type>complex</type>
+    <optional>1</optional>
   </source>
 </block>
