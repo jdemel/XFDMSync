@@ -20,6 +20,7 @@ GR_SWIG_BLOCK_MAGIC2(xfdm_sync, sc_delay_corr);
 
 %include "xfdm_sync/sc_tagger.h"
 GR_SWIG_BLOCK_MAGIC2(xfdm_sync, sc_tagger);
+
 %include "xfdm_sync/xcorr_tagger.h"
 GR_SWIG_BLOCK_MAGIC2(xfdm_sync, xcorr_tagger);
 

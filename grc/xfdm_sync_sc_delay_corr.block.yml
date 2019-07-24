@@ -1,0 +1,30 @@
+id: xfdm_sync_sc_delay_corr
+label: Schmidl and Cox correlator
+category: '[xfdm_sync]'
+
+templates:
+  imports: import xfdm_sync
+  make: xfdm_sync.sc_delay_corr(${seq_len}, ${normalize})
+
+parameters:
+- id: seq_len
+  label: Sequence length
+  dtype: int
+- id: normalize
+  label: Normalize
+  dtype: bool
+
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+
+outputs:
+- label: out_pass
+  domain: stream
+  dtype: complex
+- label: out_corr
+  domain: stream
+  dtype: complex
+
+file_format: 1

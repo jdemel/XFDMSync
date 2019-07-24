@@ -1,0 +1,39 @@
+id: xfdm_sync_sc_tagger
+label: Schmidl and Cox tagger
+category: '[xfdm_sync]'
+
+templates:
+  imports: import xfdm_sync
+  make: xfdm_sync.sc_tagger(${thres_low}, ${thres_high}, ${seq_len}, ${tag_key})
+
+parameters:
+- id: thres_low
+  label: Lower Threshold
+  dtype: float
+- id: thres_high
+  label: Upper Threshold
+  dtype: float
+- id: seq_len
+  label: Sequence length
+  dtype: int
+- id: tag_key
+  label: Tag Key
+  dtype: string
+
+inputs:
+- label: in_pass
+  domain: stream
+  dtype: complex
+- label: in_corr
+  domain: stream
+  dtype: complex
+
+outputs:
+- label: out_pass
+  domain: stream
+  dtype: complex
+- label: out_corr
+  domain: stream
+  dtype: complex
+
+file_format: 1

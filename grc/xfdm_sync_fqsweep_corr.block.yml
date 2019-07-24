@@ -1,0 +1,27 @@
+id: xfdm_sync_fqsweep_corr
+label: Frequency Sweep correlator
+category: '[xfdm_sync]'
+
+templates:
+  imports: import xfdm_sync
+  make: xfdm_sync.fqsweep_corr(${preamble_length})
+
+parameters:
+- id: preamble_length
+  label: Preamble length
+  dtype: int
+
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+
+outputs:
+- label: out_pass
+  domain: stream
+  dtype: complex
+- label: out_corr
+  domain: stream
+  dtype: complex
+
+file_format: 1

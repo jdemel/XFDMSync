@@ -1,0 +1,41 @@
+id: xfdm_sync_frame_gate
+label: Frame Gate
+category: '[xfdm_sync]'
+
+templates:
+  imports: import xfdm_sync
+  make: xfdm_sync.frame_gate(${len_prologue}, ${len_epilogue}, ${len_symbol}, ${symbols_per_frame_min}, ${symbols_per_frame_max}, ${do_compensate})
+
+parameters:
+- id: len_prologue
+  label: Prologue length
+  dtype: int
+- id: len_epilogue
+  label: Epilogue length
+  dtype: int
+- id: len_symbol
+  label: Symbol length
+  dtype: int
+- id: symbols_per_frame_min
+  label: Min Symbols per Frame
+  dtype: int
+- id: symbols_per_frame_max
+  label: Max Symbols per Frame
+  dtype: int
+- id: do_compensate
+  label: compensate freq. offset
+  dtype: bool
+
+inputs:
+- label: in
+  domain: stream
+  dtype: complex
+- label: frame_hint
+  domain: message
+
+outputs:
+- label: out
+  domain: stream
+  dtype: complex
+
+file_format: 1

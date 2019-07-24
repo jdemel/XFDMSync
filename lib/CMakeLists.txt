@@ -1,6 +1,6 @@
 # Copyright 2011,2012,2016 Free Software Foundation, Inc.
 #
-# This file is part of GNU Radio
+# This file is part of XFDMSync
 #
 # GNU Radio is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,8 +22,6 @@
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 
-include_directories(${Boost_INCLUDE_DIR})
-link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND xfdm_sync_sources
     sc_delay_corr_impl.cc
     sc_tagger_impl.cc
@@ -37,7 +35,11 @@ if(NOT xfdm_sync_sources)
 endif(NOT xfdm_sync_sources)
 
 add_library(gnuradio-xfdm_sync SHARED ${xfdm_sync_sources})
-target_link_libraries(gnuradio-xfdm_sync ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-xfdm_sync gnuradio::gnuradio-runtime gnuradio-fft)
+target_include_directories(gnuradio-xfdm_sync
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
+    PUBLIC $<INSTALL_INTERFACE:include>
+  )
 set_target_properties(gnuradio-xfdm_sync PROPERTIES DEFINE_SYMBOL "gnuradio_xfdm_sync_EXPORTS")
 
 if(APPLE)
@@ -50,35 +52,37 @@ endif(APPLE)
 # Install built library files
 ########################################################################
 include(GrMiscUtils)
-GR_LIBRARY_FOO(gnuradio-xfdm_sync RUNTIME_COMPONENT "xfdm_sync_runtime" DEVEL_COMPONENT "xfdm_sync_devel")
-
-########################################################################
-# Build and register unit test
-########################################################################
-include(GrTest)
-
-include_directories(${CPPUNIT_INCLUDE_DIRS})
-
-list(APPEND test_xfdm_sync_sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_xfdm_sync.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/qa_xfdm_sync.cc
-)
-
-add_executable(test-xfdm_sync ${test_xfdm_sync_sources})
-
-target_link_libraries(
-  test-xfdm_sync
-  ${GNURADIO_RUNTIME_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${CPPUNIT_LIBRARIES}
-  gnuradio-xfdm_sync
-)
-
-GR_ADD_TEST(test_xfdm_sync test-xfdm_sync)
+GR_LIBRARY_FOO(gnuradio-xfdm_sync)
 
 ########################################################################
 # Print summary
 ########################################################################
 message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "Building for version: ${VERSION} / ${LIBVER}")
+
+########################################################################
+# Build and register unit test
+########################################################################
+include(GrTest)
+
+# If your unit tests require special include paths, add them here
+#include_directories()
+# List all files that contain Boost.UTF unit tests here
+list(APPEND test_xfdm_sync_sources
+    ${CMAKE_CURRENT_SOURCE_DIR}/test_xfdm_sync.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/qa_xfdm_sync.cc
+)
+# Anything we need to link to for the unit tests go here
+list(APPEND GR_TEST_TARGET_DEPS gnuradio-test38)
+
+if(NOT test_test38_sources)
+    MESSAGE(STATUS "No C++ unit tests... skipping")
+    return()
+endif(NOT test_test38_sources)
+
+foreach(qa_file ${test_xfdm_sync_sources})
+    GR_ADD_CPP_TEST("xfdm_sync_${qa_file}"
+        ${CMAKE_CURRENT_SOURCE_DIR}/${qa_file}
+    )
+endforeach(qa_file)
 
