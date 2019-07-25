@@ -67,8 +67,8 @@ namespace gr {
       set_history(d_fft_len/2);
 
       /* Allocate space for the fourier-transformed sequence */
-      d_sequence_fq= (gr_complex *)volk_malloc(sizeof(gr_complex) * d_fft_len,
-                                               volk_get_alignment());
+      d_sequence_fq = (gr_complex *)volk_malloc(sizeof(gr_complex) * d_fft_len,
+                                                volk_get_alignment());
 
       /* Let the GNURadio wrapper setup some fftw contexts */
       d_fft_fwd= new gr::fft::fft_complex(d_fft_len, true, 1);
