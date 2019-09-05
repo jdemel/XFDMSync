@@ -111,7 +111,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 1e6
+    value: 2e4
   states:
     bus_sink: false
     bus_source: false
@@ -187,7 +187,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 228]
+    coordinate: [960, 228.0]
     rotation: 0
     state: enabled
 - name: blocks_tag_debug_0
@@ -196,17 +196,17 @@ blocks:
     affinity: ''
     alias: ''
     comment: ''
-    display: 'False'
+    display: 'True'
     filter: '""'
     name: ''
-    num_inputs: '1'
+    num_inputs: '2'
     type: complex
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [944, 484]
+    coordinate: [1064, 684.0]
     rotation: 0
     state: enabled
 - name: blocks_throttle_0
@@ -285,7 +285,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [704, 196]
+    coordinate: [696, 188.0]
     rotation: 0
     state: enabled
 - name: hier_multicarrier_sync_0
@@ -306,9 +306,9 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [256, 528]
+    coordinate: [312, 616.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: import_numpy
   id: import
   parameters:
@@ -339,16 +339,16 @@ blocks:
     alpha9: '1.0'
     autoscale: 'False'
     axislabels: 'True'
-    color1: '"blue"'
-    color10: '"blue"'
-    color2: '"red"'
-    color3: '"green"'
-    color4: '"black"'
-    color5: '"cyan"'
-    color6: '"magenta"'
-    color7: '"yellow"'
-    color8: '"dark red"'
-    color9: '"dark green"'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
     comment: ''
     ctrlpanel: 'False'
     entags: 'True'
@@ -416,7 +416,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [944, 380]
+    coordinate: [1000, 468.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0_0
@@ -436,16 +436,16 @@ blocks:
     alpha9: '1.0'
     autoscale: 'False'
     axislabels: 'True'
-    color1: '"blue"'
-    color10: '"blue"'
-    color2: '"red"'
-    color3: '"green"'
-    color4: '"black"'
-    color5: '"cyan"'
-    color6: '"magenta"'
-    color7: '"yellow"'
-    color8: '"dark red"'
-    color9: '"dark green"'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
     comment: ''
     ctrlpanel: 'False'
     entags: 'True'
@@ -474,7 +474,7 @@ blocks:
     marker9: '-1'
     name: '"SC vs Source"'
     nconnections: '3'
-    size: 1024*8
+    size: 1024*16
     srate: samp_rate
     stemplot: 'False'
     style1: '1'
@@ -513,7 +513,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [712, 544]
+    coordinate: [696, 336.0]
     rotation: 0
     state: enabled
 - name: xfdm_sync_sc_delay_corr_0
@@ -530,7 +530,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [64, 392]
+    coordinate: [120, 480.0]
     rotation: 0
     state: enabled
 - name: xfdm_sync_sc_tagger_0
@@ -549,7 +549,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [304, 380]
+    coordinate: [360, 468.0]
     rotation: 0
     state: enabled
 - name: xfdm_sync_xcorr_tagger_0
@@ -568,7 +568,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [680, 380]
+    coordinate: [744, 468.0]
     rotation: 0
     state: enabled
 
@@ -580,13 +580,14 @@ connections:
 - [blocks_vector_insert_x_0, '0', blocks_throttle_0, '0']
 - [blocks_vector_source_x_0, '0', blocks_vector_insert_x_0, '0']
 - [channels_channel_model_0, '0', blocks_multiply_const_vxx_0, '0']
-- [hier_multicarrier_sync_0, '0', blocks_tag_debug_0, '0']
 - [xfdm_sync_sc_delay_corr_0, '0', xfdm_sync_sc_tagger_0, '0']
 - [xfdm_sync_sc_delay_corr_0, '1', xfdm_sync_sc_tagger_0, '1']
+- [xfdm_sync_sc_tagger_0, '0', blocks_tag_debug_0, '0']
 - [xfdm_sync_sc_tagger_0, '0', qtgui_time_sink_x_0_0_0, '0']
 - [xfdm_sync_sc_tagger_0, '0', xfdm_sync_xcorr_tagger_0, '0']
 - [xfdm_sync_sc_tagger_0, '1', qtgui_time_sink_x_0_0_0, '1']
 - [xfdm_sync_sc_tagger_0, '1', xfdm_sync_xcorr_tagger_0, '1']
+- [xfdm_sync_xcorr_tagger_0, '0', blocks_tag_debug_0, '1']
 - [xfdm_sync_xcorr_tagger_0, '0', qtgui_time_sink_x_0_0, '0']
 - [xfdm_sync_xcorr_tagger_0, '1', qtgui_time_sink_x_0_0, '1']
 

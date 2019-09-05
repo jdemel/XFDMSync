@@ -50,7 +50,9 @@ namespace gr {
       d_relative_correlation_power_key(pmt::mp("xcorr_rel_power")),
       d_rotation_key(pmt::mp("xcorr_rot")),
       d_index_key(pmt::mp("xcorr_idx")),
-      d_sc_offset_key(pmt::mp("sc_offset"))
+      d_sc_offset_key(pmt::mp("sc_offset")),
+      d_last_sc_offset(0),
+      d_last_xcorr_tag_offset(0)
     {
       set_tag_propagation_policy(TPP_DONT);
 
@@ -180,6 +182,9 @@ namespace gr {
                         d_tag_key);
 
       for(tag_t tag: tags) {
+        if (tag.offset < d_last_xcorr_tag_offset){ // already found tag in area. Skip this tag.
+          continue;
+        }
         int tag_center= tag.offset + history() - nitems_read(0);
 
         const int fft_payload_len= d_fft_len/2;
@@ -287,6 +292,10 @@ namespace gr {
 
         if(rel_power > d_threshold) {
           const int64_t peak_offset = (int64_t)(tag.offset + d_fft_len/4) + peak_idx_rel;
+          if (peak_offset == d_last_xcorr_tag_offset){
+            continue;
+          }
+          d_last_xcorr_tag_offset = peak_offset;
           const int64_t frame_buffer_start = peak_offset - nitems_written(0);
 
           // make sure sure we don't read from invalid memory!

@@ -55,7 +55,7 @@ if(CMAKE_COMPILER_IS_GNUCXX AND NOT WIN32)
     add_definitions(-fvisibility=hidden)
   endif()
 
-find_package(Gnuradio "3.8" REQUIRED FFT)
+find_package(Gnuradio "3.9" REQUIRED FFT)
 include(GrVersion)
 
 
