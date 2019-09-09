@@ -35,6 +35,7 @@ namespace gr {
       uint64_t d_peak_idx;
       uint64_t d_last_sc_offset;
       uint64_t d_last_xcorr_tag_offset;
+      uint64_t d_last_sc_idx;
       bool d_use_sc_rot;
       int d_fft_len;
       int d_sync_seq_len;

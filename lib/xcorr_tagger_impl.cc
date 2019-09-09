@@ -52,7 +52,8 @@ namespace gr {
       d_index_key(pmt::mp("xcorr_idx")),
       d_sc_offset_key(pmt::mp("sc_offset")),
       d_last_sc_offset(0),
-      d_last_xcorr_tag_offset(0)
+      d_last_xcorr_tag_offset(0),
+      d_last_sc_idx(0)
     {
       set_tag_propagation_policy(TPP_DONT);
 
@@ -183,14 +184,23 @@ namespace gr {
 
       for(tag_t tag: tags) {
         if (tag.offset < d_last_xcorr_tag_offset){ // already found tag in area. Skip this tag.
+          std::cout << "Got past offset: " << tag.offset << " < " << d_last_xcorr_tag_offset << std::endl;
           continue;
         }
+
         int tag_center= tag.offset + history() - nitems_read(0);
 
         const int fft_payload_len= d_fft_len/2;
         const int fft_payload_half_len= fft_payload_len/2;
 
         pmt::pmt_t info = tag.value;
+        uint64_t sc_idx = pmt::to_uint64(pmt::dict_ref(info, pmt::mp("sc_idx"), pmt::PMT_NIL));
+        std::cout << "get_item_tag " << tag.offset << ", idx=" << sc_idx << std::endl;
+        if(sc_idx != (d_last_sc_idx + 1)){
+          std::cout << "get_item_tag " << tag.offset << " WARNING: tag index discontinuity! got: " << sc_idx << ", expected: " << d_last_sc_idx + 1 << std::endl;
+        }
+        d_last_sc_idx = sc_idx;
+
 
         gr_complex *fwd_in= d_fft_fwd->get_inbuf();
         gr_complex *fwd_out= d_fft_fwd->get_outbuf();

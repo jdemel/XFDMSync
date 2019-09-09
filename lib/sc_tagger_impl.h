@@ -35,6 +35,8 @@ namespace gr {
       int d_seq_len;
       int d_lookahead;
 
+      uint64_t d_index_counter;
+
       pmt::pmt_t d_tag_key;
 
       const pmt::pmt_t d_correlation_power_key;
@@ -44,13 +46,23 @@ namespace gr {
                                const gr_complex rot_per_sym,
                                const uint64_t idx);
 
-      struct {
+      struct peak_info{
         uint64_t id;
         bool am_inside;
         uint64_t abs_idx;
         gr_complex corr;
         float corr_pw_sq;
-      } d_peak;
+      };
+
+      peak_info d_peak;
+
+      // struct {
+      //   uint64_t id;
+      //   bool am_inside;
+      //   uint64_t abs_idx;
+      //   gr_complex corr;
+      //   float corr_pw_sq;
+      // } d_peak;
 
     public:
       sc_tagger_impl(float thres_low, float thres_high, int seq_len, const std::string &tag_key);

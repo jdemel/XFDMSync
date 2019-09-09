@@ -42,6 +42,7 @@ namespace gr {
       d_thres_high_sq(thres_high * thres_high),
       d_seq_len(seq_len),
       d_lookahead(2*seq_len),
+      d_index_counter(0),
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
       d_index_key(pmt::mp("sc_idx"))
@@ -82,6 +83,10 @@ namespace gr {
       info = pmt::dict_add(info,
                            d_index_key,
                            pmt::from_uint64(idx));
+      if(idx != d_index_counter){
+        std::cout << "failed idx counter " << idx << ", " << d_index_counter << std::endl;
+      }
+      d_index_counter++;
       return info;
     }
 
@@ -115,7 +120,10 @@ namespace gr {
           rot_per_sym /= std::abs(rot_per_sym);
 
           auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);
-
+          std::cout << "add_item_tag " << d_peak.abs_idx << ", nitems_written=" << nitems_written(0) << ", idx=" << d_peak.id << std::endl;
+          if(d_peak.abs_idx < nitems_written(0)){
+            std::cout << "PAST_TAG!!!! " << d_peak.abs_idx << " < " << nitems_written(0) << ", idx=" << d_peak.id << std::endl;
+          }
           add_item_tag(0, d_peak.abs_idx,
                        d_tag_key,
                        info);
