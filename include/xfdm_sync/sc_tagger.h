@@ -47,6 +47,9 @@ namespace gr {
        * creating new instances.
        */
       static sptr make(float thres_low, float thres_high, int seq_len, const std::string &tag_key="frame_start");
+
+      virtual void set_threshold_low(float threshold) = 0;
+      virtual void set_threshold_high(float threshold) = 0;
     };
 
   } // namespace xfdm_sync

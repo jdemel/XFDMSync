@@ -33,9 +33,7 @@ namespace gr {
 
       float d_threshold;
       uint64_t d_peak_idx;
-      uint64_t d_last_sc_offset;
       uint64_t d_last_xcorr_tag_offset;
-      uint64_t d_last_sc_idx;
       bool d_use_sc_rot;
       int d_fft_len;
       int d_sync_seq_len;
@@ -68,6 +66,8 @@ namespace gr {
       int work(int noutput_items,
                gr_vector_const_void_star &input_items,
                gr_vector_void_star &output_items);
+
+      void set_threshold(float threshold){d_threshold = threshold;};
     };
   }
 }

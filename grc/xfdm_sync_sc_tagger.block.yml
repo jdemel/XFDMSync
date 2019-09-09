@@ -5,6 +5,9 @@ category: '[xfdm_sync]'
 templates:
   imports: import xfdm_sync
   make: xfdm_sync.sc_tagger(${thres_low}, ${thres_high}, ${seq_len}, ${tag_key})
+  callbacks:
+    - set_threshold_low(${thres_low})
+    - set_threshold_high(${thres_high})
 
 parameters:
 - id: thres_low

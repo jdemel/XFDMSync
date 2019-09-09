@@ -44,6 +44,30 @@ blocks:
     coordinate: [1232, 76]
     rotation: 0
     state: enabled
+- name: full_preamble
+  id: variable
+  parameters:
+    comment: ''
+    value: epy_module_0.full_preamble
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [608, 36.0]
+    rotation: 0
+    state: enabled
+- name: reference_data
+  id: variable
+  parameters:
+    comment: ''
+    value: epy_module_0.reference
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [552, 100.0]
+    rotation: 0
+    state: enabled
 - name: rgain
   id: variable_qtgui_range
   parameters:
@@ -251,7 +275,7 @@ blocks:
     offset: '0'
     period: '4096'
     type: complex
-    vector: '[0, ] * (4096 - len(epy_module_0.full_preamble))'
+    vector: '[0, ] * (4096 - len(reference_data))'
   states:
     bus_sink: false
     bus_source: false
@@ -270,7 +294,7 @@ blocks:
     repeat: 'True'
     tags: '[]'
     type: complex
-    vector: epy_module_0.full_preamble
+    vector: reference_data
     vlen: '1'
   states:
     bus_sink: false
@@ -318,16 +342,26 @@ blocks:
   parameters:
     alias: ''
     comment: ''
-    source_code: "# this module will be imported in the into your flowgraph\nfrom\
-      \ gfdm.pygfdm import mapping\nfrom gfdm.pygfdm import utils\nfrom gfdm.pygfdm\
-      \ import preamble as pre_module\n\n\ndef generate_preambles(subcarriers=64,\
-      \ active_subcarriers=52, overlap=2, cp_len=16, ramp_len=8):\n    subcarrier_map\
-      \ = mapping.get_subcarrier_map(subcarriers, active_subcarriers, dc_free=True)\n\
-      \    seed = utils.generate_seed('awesome preamble')\n    preambles = pre_module.mapped_preamble(seed,\
-      \ 'rrc', .2, active_subcarriers, subcarriers, subcarrier_map, overlap, cp_len,\
-      \ ramp_len)\n    return preambles\n\npreambles = generate_preambles()\nfull_preamble\
-      \ = preambles[0]\ncore_preamble = preambles[1]\n\nprint(full_preamble.size)\n\
-      print(core_preamble.size)\n\n"
+    source_code: "# this module will be imported in the into your flowgraph\nimport\
+      \ numpy as np\nfrom gfdm.pygfdm import mapping\nfrom gfdm.pygfdm import utils\n\
+      from gfdm.pygfdm import preamble as pre_module\nfrom gfdm.pygfdm.gfdm_modulation\
+      \ import modulate_mapped_gfdm_block\nfrom gfdm.pygfdm.cyclic_prefix import add_cyclic_starfix,\
+      \ get_raised_cosine_ramp, pinch_block, get_window_len\n\n\ndef generate_payload(timeslots=9,\
+      \ subcarriers=64, active_subcarriers=52, overlap=2, cp_len=16, ramp_len=8):\n\
+      \    cs_len = ramp_len\n    seed = utils.generate_seed('awesome frame')\n  \
+      \  d = utils.get_random_qpsk(timeslots * active_subcarriers, seed)\n    frame\
+      \ = modulate_mapped_gfdm_block(d, timeslots, subcarriers, active_subcarriers,\
+      \ overlap, .2, dc_free=True)\n    symbol = add_cyclic_starfix(frame, cp_len,\
+      \ cs_len)\n    window_ramp = get_raised_cosine_ramp(cs_len, get_window_len(cp_len,\
+      \ timeslots, subcarriers, cs_len))\n    return pinch_block(symbol, window_ramp)\n\
+      \n\ndef generate_preambles(subcarriers=64, active_subcarriers=52, overlap=2,\
+      \ cp_len=16, ramp_len=8):\n    subcarrier_map = mapping.get_subcarrier_map(subcarriers,\
+      \ active_subcarriers, dc_free=True)\n    seed = utils.generate_seed('awesome\
+      \ preamble')\n    preambles = pre_module.mapped_preamble(seed, 'rrc', .2, active_subcarriers,\
+      \ subcarriers, subcarrier_map, overlap, cp_len, ramp_len)\n    return preambles\n\
+      \npreambles = generate_preambles()\nfull_preamble = preambles[0]\ncore_preamble\
+      \ = preambles[1]\n\nprint(full_preamble.size)\nprint(core_preamble.size)\n\n\
+      payload = generate_payload()\n\nreference = np.concatenate((full_preamble, payload))\n"
   states:
     bus_sink: false
     bus_source: false

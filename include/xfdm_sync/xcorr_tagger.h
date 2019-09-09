@@ -47,6 +47,8 @@ namespace gr {
        * creating new instances.
        */
       static sptr make(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key="frame_start");
+
+      virtual void set_threshold(float threshold) = 0;
     };
   }
 }

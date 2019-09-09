@@ -22,6 +22,7 @@
 #include "config.h"
 #endif
 
+#include <volk/volk.h>
 #include <gnuradio/io_signature.h>
 #include "sc_tagger_impl.h"
 
@@ -42,10 +43,11 @@ namespace gr {
       d_thres_high_sq(thres_high * thres_high),
       d_seq_len(seq_len),
       d_lookahead(2*seq_len),
-      d_index_counter(0),
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
-      d_index_key(pmt::mp("sc_idx"))
+      d_index_key(pmt::mp("sc_idx")),
+      d_norm_array(nullptr),
+      d_norm_array_length(0)
     {
       set_tag_propagation_policy(TPP_DONT);
 
@@ -60,10 +62,23 @@ namespace gr {
       else{
         d_tag_key = pmt::string_to_symbol(tag_key);
       }
+
+      update_norm_array_length(1024); // some sensible default.
     }
 
     sc_tagger_impl::~sc_tagger_impl()
     {
+    }
+
+    void
+    sc_tagger_impl::update_norm_array_length(const int array_len)
+    {
+      if(array_len > d_norm_array_length){
+        volk_free(d_norm_array);
+        d_norm_array_length = array_len;
+        d_norm_array = (float*) volk_malloc(sizeof(float) * d_norm_array_length,
+                                            volk_get_alignment());
+      }
     }
 
     pmt::pmt_t
@@ -83,10 +98,7 @@ namespace gr {
       info = pmt::dict_add(info,
                            d_index_key,
                            pmt::from_uint64(idx));
-      if(idx != d_index_counter){
-        std::cout << "failed idx counter " << idx << ", " << d_index_counter << std::endl;
-      }
-      d_index_counter++;
+
       return info;
     }
 
@@ -107,23 +119,29 @@ namespace gr {
       memcpy(out_pass, &in_pass[-d_lookahead], sizeof(gr_complex) * noutput_items);
       memcpy(out_corr, &in_corr[-d_lookahead], sizeof(gr_complex) * noutput_items);
 
+      update_norm_array_length(noutput_items);
+      volk_32fc_magnitude_squared_32f(d_norm_array, in_corr, noutput_items);
       for(int io_idx = 0; io_idx < noutput_items; io_idx++) {
-        gr_complex corr= in_corr[io_idx];
-        float power_sq= std::norm(corr);
+        const gr_complex corr = in_corr[io_idx];
+        const float power_sq = d_norm_array[io_idx];
+        if(std::abs(std::norm(corr) - power_sq) > 0.0001f){
+          std::cout << "This is wrong! " << power_sq << ", " << std::norm(corr) << std::endl;
+        }
 
         /* check if we left the peak with the current sample */
         if(d_peak.am_inside && (power_sq < d_thres_low_sq)) {
           d_peak.am_inside = false;
+          if(d_peak.abs_idx < nitems_written(0) ||
+             d_peak.abs_idx < nitems_read(0) + io_idx){
+            continue;
+          }
 
-          float corr_power = std::sqrt(d_peak.corr_pw_sq);
+          const float corr_power = std::sqrt(d_peak.corr_pw_sq);
           gr_complex rot_per_sym = std::pow(d_peak.corr, 1.0f / d_seq_len);
           rot_per_sym /= std::abs(rot_per_sym);
 
           auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);
-          std::cout << "add_item_tag " << d_peak.abs_idx << ", nitems_written=" << nitems_written(0) << ", idx=" << d_peak.id << std::endl;
-          if(d_peak.abs_idx < nitems_written(0)){
-            std::cout << "PAST_TAG!!!! " << d_peak.abs_idx << " < " << nitems_written(0) << ", idx=" << d_peak.id << std::endl;
-          }
+
           add_item_tag(0, d_peak.abs_idx,
                        d_tag_key,
                        info);

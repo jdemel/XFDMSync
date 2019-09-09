@@ -35,7 +35,8 @@ namespace gr {
       int d_seq_len;
       int d_lookahead;
 
-      uint64_t d_index_counter;
+      float* d_norm_array;
+      int d_norm_array_length;
 
       pmt::pmt_t d_tag_key;
 
@@ -56,13 +57,7 @@ namespace gr {
 
       peak_info d_peak;
 
-      // struct {
-      //   uint64_t id;
-      //   bool am_inside;
-      //   uint64_t abs_idx;
-      //   gr_complex corr;
-      //   float corr_pw_sq;
-      // } d_peak;
+      void update_norm_array_length(const int array_len);
 
     public:
       sc_tagger_impl(float thres_low, float thres_high, int seq_len, const std::string &tag_key);
@@ -71,6 +66,9 @@ namespace gr {
       int work(int noutput_items,
                gr_vector_const_void_star &input_items,
                gr_vector_void_star &output_items);
+
+      void set_threshold_low(float threshold){d_thres_low_sq = threshold * threshold;};
+      void set_threshold_high(float threshold){d_thres_high_sq = threshold * threshold;};;
     };
   }
 }

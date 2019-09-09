@@ -77,6 +77,48 @@ blocks:
     coordinate: [48, 124]
     rotation: 0
     state: enabled
+- name: scorr_threshold_high
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:6,0,1,1
+    label: SCorr Threshold High
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '.01'
+    stop: '1.'
+    value: '.8'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1352, 444.0]
+    rotation: 0
+    state: enabled
+- name: scorr_threshold_low
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:7,0,1,1
+    label: SCorr Threshold Low
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '.01'
+    stop: '1.'
+    value: '.4'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1352, 308.0]
+    rotation: 0
+    state: enabled
 - name: sync_key
   id: variable
   parameters:
@@ -172,6 +214,27 @@ blocks:
     coordinate: [1200, 180.0]
     rotation: 0
     state: enabled
+- name: xcorr_threshold
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:5,0,1,1
+    label: XCorr Threshold
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '1'
+    stop: '200.'
+    value: '11.'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1352, 180.0]
+    rotation: 0
+    state: enabled
 - name: blocks_complex_to_mag_squared_0
   id: blocks_complex_to_mag_squared
   parameters:
@@ -239,7 +302,7 @@ blocks:
     bus_structure: null
     coordinate: [1160, 548.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_vector_insert_x_0
   id: blocks_vector_insert_x
   parameters:
@@ -318,16 +381,27 @@ blocks:
   parameters:
     alias: ''
     comment: ''
-    source_code: "# this module will be imported in the into your flowgraph\nfrom\
-      \ gfdm.pygfdm import mapping\nfrom gfdm.pygfdm import utils\nfrom gfdm.pygfdm\
-      \ import preamble as pre_module\n\n\ndef generate_preambles(subcarriers=64,\
-      \ active_subcarriers=52, overlap=2, cp_len=16, ramp_len=8):\n    subcarrier_map\
-      \ = mapping.get_subcarrier_map(subcarriers, active_subcarriers, dc_free=True)\n\
-      \    seed = utils.generate_seed('awesome preamble')\n    preambles = pre_module.mapped_preamble(seed,\
-      \ 'rrc', .2, active_subcarriers, subcarriers, subcarrier_map, overlap, cp_len,\
-      \ ramp_len)\n    return preambles\n\npreambles = generate_preambles()\nfull_preamble\
-      \ = preambles[0]\ncore_preamble = preambles[1]\n\nprint(full_preamble.size)\n\
-      print(core_preamble.size)\n\n"
+    source_code: "# this module will be imported in the into your flowgraph\nimport\
+      \ numpy as np\nfrom gfdm.pygfdm import mapping\nfrom gfdm.pygfdm import utils\n\
+      from gfdm.pygfdm import preamble as pre_module\nfrom gfdm.pygfdm.gfdm_modulation\
+      \ import modulate_mapped_gfdm_block\nfrom gfdm.pygfdm.cyclic_prefix import add_cyclic_starfix,\
+      \ get_raised_cosine_ramp, pinch_block, get_window_len\n\n\ndef generate_payload(timeslots=9,\
+      \ subcarriers=64, active_subcarriers=52, overlap=2, cp_len=16, ramp_len=8):\n\
+      \    cs_len = ramp_len\n    seed = utils.generate_seed('awesome frame')\n  \
+      \  d = utils.get_random_qpsk(timeslots * active_subcarriers, seed)\n    frame\
+      \ = modulate_mapped_gfdm_block(d, timeslots, subcarriers, active_subcarriers,\
+      \ overlap, .2, dc_free=True)\n    symbol = add_cyclic_starfix(frame, cp_len,\
+      \ cs_len)\n    window_ramp = get_raised_cosine_ramp(cs_len, get_window_len(cp_len,\
+      \ timeslots, subcarriers, cs_len))\n    return pinch_block(symbol, window_ramp)\n\
+      \n\ndef generate_preambles(subcarriers=64, active_subcarriers=52, overlap=2,\
+      \ cp_len=16, ramp_len=8):\n    subcarrier_map = mapping.get_subcarrier_map(subcarriers,\
+      \ active_subcarriers, dc_free=True)\n    seed = utils.generate_seed('awesome\
+      \ preamble')\n    preambles = pre_module.mapped_preamble(seed, 'rrc', .2, active_subcarriers,\
+      \ subcarriers, subcarrier_map, overlap, cp_len, ramp_len)\n    return preambles\n\
+      \npreambles = generate_preambles()\nfull_preamble = preambles[0]\ncore_preamble\
+      \ = preambles[1]\n\nprint(full_preamble.size)\nprint(core_preamble.size)\n\n\
+      \npayload = generate_payload()\n\n#reference_frame = np.concatenate((full_preamble,\
+      \ payload))\n"
   states:
     bus_sink: false
     bus_source: false
@@ -560,7 +634,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [904, 344.0]
+    coordinate: [920, 604.0]
     rotation: 0
     state: enabled
 - name: qtgui_time_sink_x_0_0_0_0
@@ -1368,8 +1442,8 @@ blocks:
     minoutbuf: '0'
     seq_len: len(sync_seq)
     tag_key: sync_key
-    thres_high: '0.8'
-    thres_low: '0.3'
+    thres_high: scorr_threshold_high
+    thres_low: scorr_threshold_low
   states:
     bus_sink: false
     bus_source: false
@@ -1387,7 +1461,7 @@ blocks:
     minoutbuf: '0'
     sync_sequence: epy_module_0.core_preamble
     tag_key: sync_key
-    threshold: '50.'
+    threshold: xcorr_threshold
     use_sc_rot: 'True'
   states:
     bus_sink: false

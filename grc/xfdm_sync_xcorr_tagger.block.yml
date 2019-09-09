@@ -5,6 +5,8 @@ category: '[xfdm_sync]'
 templates:
   imports: import xfdm_sync
   make: xfdm_sync.xcorr_tagger(${threshold}, ${sync_sequence}, ${use_sc_rot}, ${tag_key})
+  callbacks:
+    - set_threshold(${threshold})
 
 parameters:
 - id: threshold
