@@ -115,6 +115,9 @@ namespace gr {
       const gr_complex *in_pass = &in_pass_history[history() - 1];
       const gr_complex *in_corr = &in_corr_history[history() - 1];
 
+      const float threshold_sq_low = d_thres_low_sq;
+      const float threshold_sq_high = d_thres_high_sq;
+
       /* This block delays by d_lookahead samples */
       memcpy(out_pass, &in_pass[-d_lookahead], sizeof(gr_complex) * noutput_items);
       memcpy(out_corr, &in_corr[-d_lookahead], sizeof(gr_complex) * noutput_items);
@@ -129,7 +132,7 @@ namespace gr {
         }
 
         /* check if we left the peak with the current sample */
-        if(d_peak.am_inside && (power_sq < d_thres_low_sq)) {
+        if(d_peak.am_inside && (power_sq < threshold_sq_low)) {
           d_peak.am_inside = false;
           if(d_peak.abs_idx < nitems_written(0) ||
              d_peak.abs_idx < nitems_read(0) + io_idx){
@@ -150,7 +153,7 @@ namespace gr {
         }
 
         /* check if we entered the peak with the current sample */
-        if(!d_peak.am_inside && (power_sq > d_thres_high_sq)) {
+        if(!d_peak.am_inside && (power_sq > threshold_sq_high)) {
           d_peak.am_inside= true;
           d_peak.corr_pw_sq= 0;
         }

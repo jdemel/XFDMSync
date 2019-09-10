@@ -26,9 +26,9 @@ import pmt
 import xfdm_sync_swig as xfdm_sync
 import numpy as np
 
-import os
-print('Blocked waiting for GDB attach (pid = %d)' % (os.getpid(),))
-input('Press Enter to continue: ')
+# import os
+# print('Blocked waiting for GDB attach (pid = %d)' % (os.getpid(),))
+# input('Press Enter to continue: ')
 
 
 class qa_xcorr_tagger(gr_unittest.TestCase):

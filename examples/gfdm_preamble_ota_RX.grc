@@ -69,7 +69,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 200e6 / 64 * 2
+    value: 200e6 / 64 * 4
   states:
     bus_sink: false
     bus_source: false
@@ -171,7 +171,7 @@ blocks:
     bus_structure: null
     coordinate: [168, 124]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: tfreq
   id: variable_qtgui_range
   parameters:
@@ -235,38 +235,25 @@ blocks:
     coordinate: [1352, 180.0]
     rotation: 0
     state: enabled
-- name: blocks_complex_to_mag_squared_0
-  id: blocks_complex_to_mag_squared
+- name: auto_corr_tagger
+  id: xfdm_sync_sc_tagger
   parameters:
     affinity: ''
     alias: ''
     comment: ''
     maxoutbuf: '0'
     minoutbuf: '0'
-    vlen: '1'
+    seq_len: len(data_reference.core_preamble) // 2
+    tag_key: sync_key
+    thres_high: scorr_threshold_high
+    thres_low: scorr_threshold_low
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [568, 632.0]
+    coordinate: [520, 444.0]
     rotation: 0
-    state: enabled
-- name: blocks_float_to_complex_0
-  id: blocks_float_to_complex
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [752, 632.0]
-    rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_null_sink_0
   id: blocks_null_sink
   parameters:
@@ -300,7 +287,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1160, 548.0]
+    coordinate: [1160, 556.0]
     rotation: 0
     state: disabled
 - name: blocks_vector_insert_x_0
@@ -314,7 +301,7 @@ blocks:
     offset: '0'
     period: '4096'
     type: complex
-    vector: '[0, ] * (4096 - len(epy_module_0.full_preamble))'
+    vector: '[0, ] * (4096 - len(data_reference.full_preamble))'
   states:
     bus_sink: false
     bus_source: false
@@ -333,13 +320,64 @@ blocks:
     repeat: 'True'
     tags: '[]'
     type: complex
-    vector: epy_module_0.full_preamble
+    vector: data_reference.full_preamble
     vlen: '1'
   states:
     bus_sink: false
     bus_source: false
     bus_structure: null
     coordinate: [40, 212]
+    rotation: 0
+    state: disabled
+- name: corr_mag_sq_complex
+  id: blocks_float_to_complex
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [752, 632.0]
+    rotation: 0
+    state: disabled
+- name: corr_mag_squared
+  id: blocks_complex_to_mag_squared
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [568, 632.0]
+    rotation: 0
+    state: disabled
+- name: cross_corr_tagger
+  id: xfdm_sync_xcorr_tagger
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sync_sequence: data_reference.core_preamble
+    tag_key: sync_key
+    threshold: xcorr_threshold
+    use_sc_rot: 'True'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [904, 444.0]
     rotation: 0
     state: disabled
 - name: ctrl_tab
@@ -376,7 +414,7 @@ blocks:
     coordinate: [944, 116.0]
     rotation: 0
     state: enabled
-- name: epy_module_0
+- name: data_reference
   id: epy_module
   parameters:
     alias: ''
@@ -409,6 +447,23 @@ blocks:
     coordinate: [464, 44.0]
     rotation: 0
     state: true
+- name: delay_auto_correlator
+  id: xfdm_sync_sc_delay_corr
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    normalize: 'False'
+    seq_len: len(data_reference.core_preamble) // 2
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [280, 460.0]
+    rotation: 0
+    state: disabled
 - name: hier_multicarrier_sync_0
   id: hier_multicarrier_sync
   parameters:
@@ -418,7 +473,7 @@ blocks:
     maxoutbuf: '0'
     minoutbuf: '0'
     output_tag_key: sync_key
-    ref_preamble: 2 * sync_seq
+    ref_preamble: data_reference.core_preamble
     sc_high_thr: '.7'
     sc_low_thr: '.6'
     xcorr_comp_freq: 'True'
@@ -427,7 +482,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [296, 616.0]
+    coordinate: [176, 676.0]
     rotation: 0
     state: disabled
 - name: import_numpy
@@ -443,104 +498,7 @@ blocks:
     coordinate: [208, 28]
     rotation: 0
     state: enabled
-- name: qtgui_time_sink_x_0_0
-  id: qtgui_time_sink_x
-  parameters:
-    affinity: ''
-    alias: ''
-    alpha1: '1.0'
-    alpha10: '1.0'
-    alpha2: '1.0'
-    alpha3: '1.0'
-    alpha4: '1.0'
-    alpha5: '1.0'
-    alpha6: '1.0'
-    alpha7: '1.0'
-    alpha8: '1.0'
-    alpha9: '1.0'
-    autoscale: 'True'
-    axislabels: 'True'
-    color1: blue
-    color10: dark blue
-    color2: red
-    color3: green
-    color4: black
-    color5: cyan
-    color6: magenta
-    color7: yellow
-    color8: dark red
-    color9: dark green
-    comment: ''
-    ctrlpanel: 'False'
-    entags: 'True'
-    grid: 'False'
-    gui_hint: sync_tab@0:2,0,1,1
-    label1: ''
-    label10: ''
-    label2: ''
-    label3: ''
-    label4: ''
-    label5: ''
-    label6: ''
-    label7: ''
-    label8: ''
-    label9: ''
-    legend: 'True'
-    marker1: '-1'
-    marker10: '-1'
-    marker2: '-1'
-    marker3: '-1'
-    marker4: '-1'
-    marker5: '-1'
-    marker6: '-1'
-    marker7: '-1'
-    marker8: '-1'
-    marker9: '-1'
-    name: '"Synced"'
-    nconnections: '2'
-    size: int(2 ** 14)
-    srate: samp_rate
-    stemplot: 'False'
-    style1: '1'
-    style10: '1'
-    style2: '1'
-    style3: '1'
-    style4: '1'
-    style5: '1'
-    style6: '1'
-    style7: '1'
-    style8: '1'
-    style9: '1'
-    tr_chan: '1'
-    tr_delay: 200e-6
-    tr_level: '0.5'
-    tr_mode: qtgui.TRIG_MODE_TAG
-    tr_slope: qtgui.TRIG_SLOPE_POS
-    tr_tag: sync_key
-    type: complex
-    update_time: '0.10'
-    width1: '1'
-    width10: '1'
-    width2: '1'
-    width3: '1'
-    width4: '1'
-    width5: '1'
-    width6: '1'
-    width7: '1'
-    width8: '1'
-    width9: '1'
-    ylabel: Amplitude
-    ymax: '4'
-    ymin: '-4'
-    yunit: '""'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [1160, 444.0]
-    rotation: 0
-    state: enabled
-- name: qtgui_time_sink_x_0_0_0
+- name: qtgui_time_sink_auto_corr_tagged
   id: qtgui_time_sink_x
   parameters:
     affinity: ''
@@ -634,10 +592,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [920, 604.0]
+    coordinate: [960, 596.0]
     rotation: 0
-    state: enabled
-- name: qtgui_time_sink_x_0_0_0_0
+    state: disabled
+- name: qtgui_time_sink_receive_stream
   id: qtgui_time_sink_x
   parameters:
     affinity: ''
@@ -734,6 +692,103 @@ blocks:
     coordinate: [280, 348.0]
     rotation: 0
     state: enabled
+- name: qtgui_time_sink_synchronized_stream
+  id: qtgui_time_sink_x
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha1: '1.0'
+    alpha10: '1.0'
+    alpha2: '1.0'
+    alpha3: '1.0'
+    alpha4: '1.0'
+    alpha5: '1.0'
+    alpha6: '1.0'
+    alpha7: '1.0'
+    alpha8: '1.0'
+    alpha9: '1.0'
+    autoscale: 'True'
+    axislabels: 'True'
+    color1: blue
+    color10: dark blue
+    color2: red
+    color3: green
+    color4: black
+    color5: cyan
+    color6: magenta
+    color7: yellow
+    color8: dark red
+    color9: dark green
+    comment: ''
+    ctrlpanel: 'False'
+    entags: 'True'
+    grid: 'False'
+    gui_hint: sync_tab@0:2,0,1,1
+    label1: ''
+    label10: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    label5: ''
+    label6: ''
+    label7: ''
+    label8: ''
+    label9: ''
+    legend: 'True'
+    marker1: '-1'
+    marker10: '-1'
+    marker2: '-1'
+    marker3: '-1'
+    marker4: '-1'
+    marker5: '-1'
+    marker6: '-1'
+    marker7: '-1'
+    marker8: '-1'
+    marker9: '-1'
+    name: '"Synchronized stream"'
+    nconnections: '2'
+    size: int(2 ** 14)
+    srate: samp_rate
+    stemplot: 'False'
+    style1: '1'
+    style10: '1'
+    style2: '1'
+    style3: '1'
+    style4: '1'
+    style5: '1'
+    style6: '1'
+    style7: '1'
+    style8: '1'
+    style9: '1'
+    tr_chan: '1'
+    tr_delay: 200e-6
+    tr_level: '0.5'
+    tr_mode: qtgui.TRIG_MODE_TAG
+    tr_slope: qtgui.TRIG_SLOPE_POS
+    tr_tag: sync_key
+    type: complex
+    update_time: '0.10'
+    width1: '1'
+    width10: '1'
+    width2: '1'
+    width3: '1'
+    width4: '1'
+    width5: '1'
+    width6: '1'
+    width7: '1'
+    width8: '1'
+    width9: '1'
+    ylabel: Amplitude
+    ymax: '4'
+    ymin: '-4'
+    yunit: '""'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1160, 444.0]
+    rotation: 0
+    state: disabled
 - name: sync_tab
   id: qtgui_tab_widget
   parameters:
@@ -1415,79 +1470,24 @@ blocks:
     coordinate: [40, 412.0]
     rotation: 0
     state: enabled
-- name: xfdm_sync_sc_delay_corr_0
-  id: xfdm_sync_sc_delay_corr
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    normalize: 'False'
-    seq_len: len(sync_seq)
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [280, 456.0]
-    rotation: 0
-    state: enabled
-- name: xfdm_sync_sc_tagger_0
-  id: xfdm_sync_sc_tagger
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    seq_len: len(sync_seq)
-    tag_key: sync_key
-    thres_high: scorr_threshold_high
-    thres_low: scorr_threshold_low
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [520, 444.0]
-    rotation: 0
-    state: enabled
-- name: xfdm_sync_xcorr_tagger_0
-  id: xfdm_sync_xcorr_tagger
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    maxoutbuf: '0'
-    minoutbuf: '0'
-    sync_sequence: epy_module_0.core_preamble
-    tag_key: sync_key
-    threshold: xcorr_threshold
-    use_sc_rot: 'True'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [904, 444.0]
-    rotation: 0
-    state: enabled
 
 connections:
-- [blocks_complex_to_mag_squared_0, '0', blocks_float_to_complex_0, '0']
-- [blocks_float_to_complex_0, '0', qtgui_time_sink_x_0_0_0, '1']
+- [auto_corr_tagger, '0', cross_corr_tagger, '0']
+- [auto_corr_tagger, '0', qtgui_time_sink_auto_corr_tagged, '0']
+- [auto_corr_tagger, '1', corr_mag_squared, '0']
+- [auto_corr_tagger, '1', cross_corr_tagger, '1']
 - [blocks_vector_insert_x_0, '0', uhd_usrp_sink_0_0, '0']
 - [blocks_vector_source_x_0, '0', blocks_vector_insert_x_0, '0']
-- [uhd_usrp_source_0, '0', qtgui_time_sink_x_0_0_0_0, '0']
-- [uhd_usrp_source_0, '0', xfdm_sync_sc_delay_corr_0, '0']
-- [xfdm_sync_sc_delay_corr_0, '0', xfdm_sync_sc_tagger_0, '0']
-- [xfdm_sync_sc_delay_corr_0, '1', xfdm_sync_sc_tagger_0, '1']
-- [xfdm_sync_sc_tagger_0, '0', qtgui_time_sink_x_0_0_0, '0']
-- [xfdm_sync_sc_tagger_0, '0', xfdm_sync_xcorr_tagger_0, '0']
-- [xfdm_sync_sc_tagger_0, '1', blocks_complex_to_mag_squared_0, '0']
-- [xfdm_sync_sc_tagger_0, '1', xfdm_sync_xcorr_tagger_0, '1']
-- [xfdm_sync_xcorr_tagger_0, '0', blocks_null_sink_0, '0']
-- [xfdm_sync_xcorr_tagger_0, '0', blocks_tag_debug_0, '0']
-- [xfdm_sync_xcorr_tagger_0, '0', qtgui_time_sink_x_0_0, '0']
-- [xfdm_sync_xcorr_tagger_0, '1', qtgui_time_sink_x_0_0, '1']
+- [corr_mag_sq_complex, '0', qtgui_time_sink_auto_corr_tagged, '1']
+- [corr_mag_squared, '0', corr_mag_sq_complex, '0']
+- [cross_corr_tagger, '0', blocks_null_sink_0, '0']
+- [cross_corr_tagger, '0', blocks_tag_debug_0, '0']
+- [cross_corr_tagger, '0', qtgui_time_sink_synchronized_stream, '0']
+- [cross_corr_tagger, '1', qtgui_time_sink_synchronized_stream, '1']
+- [delay_auto_correlator, '0', auto_corr_tagger, '0']
+- [delay_auto_correlator, '1', auto_corr_tagger, '1']
+- [uhd_usrp_source_0, '0', delay_auto_correlator, '0']
+- [uhd_usrp_source_0, '0', qtgui_time_sink_receive_stream, '0']
 
 metadata:
   file_format: 1
