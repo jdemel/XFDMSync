@@ -202,8 +202,9 @@ blocks:
       \ timeslots, subcarriers, cs_len))\n    return pinch_block(symbol, window_ramp)\n\
       \n\ndef generate_preambles(subcarriers=64, active_subcarriers=52, overlap=2,\
       \ cp_len=16, ramp_len=8):\n    subcarrier_map = mapping.get_subcarrier_map(subcarriers,\
-      \ active_subcarriers, dc_free=True)\n    seed = utils.generate_seed('awesome\
-      \ preamble')\n    preambles = pre_module.mapped_preamble(seed, 'rrc', .2, active_subcarriers,\
+      \ active_subcarriers, dc_free=True)\n    print('Fancy preamble seed: ', utils.generate_seed('awesome\
+      \ preamble'))\n    seed = int(3660365253)\n    print('static preamble seed:\
+      \ ', seed)\n    preambles = pre_module.mapped_preamble(seed, 'rrc', .2, active_subcarriers,\
       \ subcarriers, subcarrier_map, overlap, cp_len, ramp_len)\n    return preambles\n\
       \npreambles = generate_preambles()\nfull_preamble = preambles[0]\ncore_preamble\
       \ = preambles[1]\n\nprint(full_preamble.size)\nprint(core_preamble.size)\n\n\
