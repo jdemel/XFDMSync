@@ -44,7 +44,7 @@ blocks:
     coordinate: [400, 188]
     rotation: 0
     state: enabled
-- name: frames_0
+- name: a_stream
   id: pad_sink
   parameters:
     affinity: ''
@@ -59,10 +59,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1144, 324]
+    coordinate: [1184, 324.0]
     rotation: 0
     state: enabled
-- name: frames_0_0
+- name: b_xcorr
   id: pad_sink
   parameters:
     affinity: ''
@@ -77,28 +77,10 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [1144, 356]
+    coordinate: [1184, 356.0]
     rotation: 0
     state: enabled
-- name: frames_0_0_0
-  id: pad_sink
-  parameters:
-    affinity: ''
-    alias: ''
-    comment: ''
-    label: acorr
-    num_streams: '1'
-    optional: 'True'
-    type: complex
-    vlen: '1'
-  states:
-    bus_sink: false
-    bus_source: false
-    bus_structure: null
-    coordinate: [920, 420]
-    rotation: 0
-    state: enabled
-- name: frames_0_0_0_0
+- name: c_scorr_stream
   id: pad_sink
   parameters:
     affinity: ''
@@ -114,6 +96,24 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [920, 260]
+    rotation: 0
+    state: enabled
+- name: d_scorr
+  id: pad_sink
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: ''
+    label: acorr
+    num_streams: '1'
+    optional: 'True'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [920, 420]
     rotation: 0
     state: enabled
 - name: import_numpy
@@ -311,12 +311,12 @@ connections:
 - [pad_source_0, '0', xfdm_sync_sc_delay_corr_0_0, '0']
 - [xfdm_sync_sc_delay_corr_0_0, '0', xfdm_sync_sc_tagger_0_0, '0']
 - [xfdm_sync_sc_delay_corr_0_0, '1', xfdm_sync_sc_tagger_0_0, '1']
-- [xfdm_sync_sc_tagger_0_0, '0', frames_0_0_0_0, '0']
+- [xfdm_sync_sc_tagger_0_0, '0', c_scorr_stream, '0']
 - [xfdm_sync_sc_tagger_0_0, '0', xfdm_sync_xcorr_tagger_0_0, '0']
-- [xfdm_sync_sc_tagger_0_0, '1', frames_0_0_0, '0']
+- [xfdm_sync_sc_tagger_0_0, '1', d_scorr, '0']
 - [xfdm_sync_sc_tagger_0_0, '1', xfdm_sync_xcorr_tagger_0_0, '1']
-- [xfdm_sync_xcorr_tagger_0_0, '0', frames_0, '0']
-- [xfdm_sync_xcorr_tagger_0_0, '1', frames_0_0, '0']
+- [xfdm_sync_xcorr_tagger_0_0, '0', a_stream, '0']
+- [xfdm_sync_xcorr_tagger_0_0, '1', b_xcorr, '0']
 
 metadata:
   file_format: 1

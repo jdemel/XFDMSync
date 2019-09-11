@@ -67,8 +67,14 @@ namespace gr {
                gr_vector_const_void_star &input_items,
                gr_vector_void_star &output_items);
 
-      void set_threshold_low(float threshold){d_thres_low_sq = threshold * threshold;};
-      void set_threshold_high(float threshold){d_thres_high_sq = threshold * threshold;};;
+      void set_threshold_low(float threshold)
+      {
+        std::cout << "set_threshold_low=" << threshold << std::endl;
+        d_thres_low_sq = threshold * threshold;};
+      void set_threshold_high(float threshold)
+      {
+        std::cout << "set_threshold_high=" << threshold << std::endl;
+        d_thres_high_sq = threshold * threshold;};;
     };
   }
 }

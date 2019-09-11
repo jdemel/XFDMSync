@@ -119,6 +119,48 @@ blocks:
     coordinate: [48, 124]
     rotation: 0
     state: enabled
+- name: scorr_threshold_high
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:6,0,1,1
+    label: SCorr Threshold High
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '.01'
+    stop: '1.'
+    value: '.8'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1360, 460.0]
+    rotation: 0
+    state: enabled
+- name: scorr_threshold_low
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:7,0,1,1
+    label: SCorr Threshold Low
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '.01'
+    stop: '1.'
+    value: '.4'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1360, 332.0]
+    rotation: 0
+    state: enabled
 - name: sync_key
   id: variable
   parameters:
@@ -172,6 +214,27 @@ blocks:
     coordinate: [168, 124]
     rotation: 0
     state: enabled
+- name: xcorr_threshold
+  id: variable_qtgui_range
+  parameters:
+    comment: ''
+    gui_hint: ctrl_tab@0:5,0,1,1
+    label: XCorr Threshold
+    min_len: '200'
+    orient: Qt.Horizontal
+    rangeType: float
+    start: '0.0'
+    step: '1'
+    stop: '200.'
+    value: '11.'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1360, 204.0]
+    rotation: 0
+    state: enabled
 - name: blocks_multiply_const_vxx_0
   id: blocks_multiply_const_vxx
   parameters:
@@ -208,7 +271,7 @@ blocks:
     bus_structure: null
     coordinate: [1064, 684.0]
     rotation: 0
-    state: enabled
+    state: disabled
 - name: blocks_throttle_0
   id: blocks_throttle
   parameters:
@@ -286,6 +349,40 @@ blocks:
     bus_source: false
     bus_structure: null
     coordinate: [696, 188.0]
+    rotation: 0
+    state: enabled
+- name: ctrl_tab
+  id: qtgui_tab_widget
+  parameters:
+    alias: ''
+    comment: ''
+    gui_hint: 0,4,1,1
+    label0: Control
+    label1: Tab 1
+    label10: Tab 10
+    label11: Tab 11
+    label12: Tab 12
+    label13: Tab 13
+    label14: Tab 14
+    label15: Tab 15
+    label16: Tab 16
+    label17: Tab 17
+    label18: Tab 18
+    label19: Tab 19
+    label2: Tab 2
+    label3: Tab 3
+    label4: Tab 4
+    label5: Tab 5
+    label6: Tab 6
+    label7: Tab 7
+    label8: Tab 8
+    label9: Tab 9
+    num_tabs: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1360, 124.0]
     rotation: 0
     state: enabled
 - name: hier_multicarrier_sync_0
@@ -543,8 +640,8 @@ blocks:
     minoutbuf: '0'
     seq_len: len(sync_seq)
     tag_key: sync_key
-    thres_high: '0.7'
-    thres_low: '0.6'
+    thres_high: scorr_threshold_high
+    thres_low: scorr_threshold_low
   states:
     bus_sink: false
     bus_source: false
@@ -562,7 +659,7 @@ blocks:
     minoutbuf: '0'
     sync_sequence: 'sync_seq * 2 '
     tag_key: sync_key
-    threshold: '100.'
+    threshold: xcorr_threshold
     use_sc_rot: 'True'
   states:
     bus_sink: false

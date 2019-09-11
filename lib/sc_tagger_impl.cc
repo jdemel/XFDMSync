@@ -127,9 +127,6 @@ namespace gr {
       for(int io_idx = 0; io_idx < noutput_items; io_idx++) {
         const gr_complex corr = in_corr[io_idx];
         const float power_sq = d_norm_array[io_idx];
-        if(std::abs(std::norm(corr) - power_sq) > 0.0001f){
-          std::cout << "This is wrong! " << power_sq << ", " << std::norm(corr) << std::endl;
-        }
 
         /* check if we left the peak with the current sample */
         if(d_peak.am_inside && (power_sq < threshold_sq_low)) {
