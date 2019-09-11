@@ -93,7 +93,7 @@ blocks:
   id: variable
   parameters:
     comment: ''
-    value: 200e6 / 64 * 4
+    value: 200e6 / 64 * 2
   states:
     bus_sink: false
     bus_source: false
