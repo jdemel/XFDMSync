@@ -225,8 +225,8 @@ blocks:
     hide: none
     label: Xcorr compensate freq.
     short_id: ''
-    type: ''
-    value: 'False'
+    type: intx
+    value: '0'
   states:
     bus_sink: false
     bus_source: false

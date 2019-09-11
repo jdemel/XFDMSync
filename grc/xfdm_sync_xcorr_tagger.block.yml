@@ -4,7 +4,7 @@ category: '[xfdm_sync]'
 
 templates:
   imports: import xfdm_sync
-  make: xfdm_sync.xcorr_tagger(${threshold}, ${sync_sequence}, ${use_sc_rot}, ${tag_key})
+  make: xfdm_sync.xcorr_tagger(${threshold}, ${sync_sequence}, 0 < ${use_sc_rot}, ${tag_key})
   callbacks:
     - set_threshold(${threshold})
 
@@ -17,7 +17,7 @@ parameters:
   dtype: complex_vector
 - id: use_sc_rot
   label: compensate freq. offset
-  dtype: bool
+  dtype: int
 - id: tag_key
   label: Tag Key
   dtype: string
