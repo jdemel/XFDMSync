@@ -69,12 +69,23 @@ namespace gr {
 
       void set_threshold_low(float threshold)
       {
-        std::cout << "set_threshold_low=" << threshold << std::endl;
-        d_thres_low_sq = threshold * threshold;};
+        d_thres_low_sq = threshold * threshold;
+        if (d_thres_low_sq > d_thres_high_sq){
+          std::cout << "WARNING: low threshold > high threshold. setting low == high!\n";
+          d_thres_low_sq = d_thres_high_sq;
+        }
+        std::cout << "set_threshold_low(" << threshold << ") = " << d_thres_low_sq << std::endl;
+      };
+
       void set_threshold_high(float threshold)
       {
-        std::cout << "set_threshold_high=" << threshold << std::endl;
-        d_thres_high_sq = threshold * threshold;};;
+        d_thres_high_sq = threshold * threshold;
+        if (d_thres_low_sq > d_thres_high_sq){
+          std::cout << "WARNING: high threshold < low threshold. setting high == low!\n";
+          d_thres_high_sq = d_thres_low_sq;
+        }
+        std::cout << "set_threshold_high(" << threshold << ") = " << d_thres_high_sq << std::endl;
+      };
     };
   }
 }

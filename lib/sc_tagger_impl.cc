@@ -43,12 +43,14 @@ namespace gr {
       d_thres_high_sq(thres_high * thres_high),
       d_seq_len(seq_len),
       d_lookahead(2*seq_len),
+      d_norm_array(nullptr),
+      d_norm_array_length(0),
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
-      d_index_key(pmt::mp("sc_idx")),
-      d_norm_array(nullptr),
-      d_norm_array_length(0)
+      d_index_key(pmt::mp("sc_idx"))
     {
+      set_threshold_low(thres_low);
+      set_threshold_high(thres_high);
       set_tag_propagation_policy(TPP_DONT);
 
       set_history(d_lookahead + 1);
@@ -139,6 +141,7 @@ namespace gr {
           const float corr_power = std::sqrt(d_peak.corr_pw_sq);
           gr_complex rot_per_sym = std::pow(d_peak.corr, 1.0f / d_seq_len);
           rot_per_sym /= std::abs(rot_per_sym);
+          //std::cout << d_peak.abs_idx << ", " << d_peak.id << ", " << threshold_sq_low << " < " << threshold_sq_high << " < " << d_peak.corr_pw_sq << ", " << corr_power << std::endl;
 
           auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);
 

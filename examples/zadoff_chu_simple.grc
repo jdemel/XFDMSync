@@ -214,6 +214,21 @@ blocks:
     coordinate: [168, 124]
     rotation: 0
     state: enabled
+- name: variable_qtgui_entry_0
+  id: variable_qtgui_entry
+  parameters:
+    comment: ''
+    gui_hint: ''
+    label: ''
+    type: int
+    value: '0'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [728, 744.0]
+    rotation: 0
+    state: true
 - name: xcorr_threshold
   id: variable_qtgui_range
   parameters:
