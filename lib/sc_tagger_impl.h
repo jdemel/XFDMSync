@@ -56,6 +56,14 @@ namespace gr {
         float corr_pw_sq;
       };
 
+      size_t d_frontend_offset;
+      double d_frontend_freq;
+      double d_frontend_samp_rate;
+      uint64_t d_frontend_secs;
+      double d_frontend_fracs;
+      size_t d_frontend_ticks;
+      void update_frontend_info(const std::vector<tag_t> &tags);
+
       peak_info d_peak;
 
       void update_norm_array_length(const int array_len);

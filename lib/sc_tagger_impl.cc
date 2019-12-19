@@ -49,7 +49,11 @@ namespace gr {
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
       d_index_key(pmt::mp("sc_idx")),
-      d_time_key(pmt::mp("time"))
+      d_time_key(pmt::mp("time")),
+      d_frontend_offset(0),
+      d_frontend_freq(0.0),
+      d_frontend_samp_rate(1.0),
+      d_frontend_ticks(0)
     {
       set_threshold_low(thres_low);
       set_threshold_high(thres_high);
@@ -104,10 +108,29 @@ namespace gr {
                            pmt::from_uint64(idx));
 
       const auto ticks = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-      info = pmt::dict_add(info,
-                      d_time_key,
-                      pmt::from_long(ticks));
+      info = pmt::dict_add(info, d_time_key,
+                           pmt::from_long(ticks));
+      
       return info;
+    }
+
+    void
+    sc_tagger_impl::update_frontend_info(const std::vector<tag_t> &tags)
+    {
+      for(auto t: tags){
+        if(t.key == pmt::mp("rx_time")){
+          d_frontend_offset = t.offset;
+          d_frontend_secs = (double) pmt::to_uint64(pmt::tuple_ref(t.value, 0));
+          d_frontend_fracs = pmt::to_double(pmt::tuple_ref(t.value, 1));
+          d_frontend_ticks = size_t(1e9 * (d_frontend_secs + d_frontend_fracs));
+        }
+        if(t.key == pmt::mp("rx_rate")){
+          d_frontend_samp_rate = pmt::to_double(t.value);
+        }
+        if(t.key == pmt::mp("rx_freq")){
+          d_frontend_freq = pmt::to_double(t.value);
+        }
+      }
     }
 
     int
@@ -122,6 +145,10 @@ namespace gr {
 
       const gr_complex *in_pass = &in_pass_history[history() - 1];
       const gr_complex *in_corr = &in_corr_history[history() - 1];
+
+      std::vector<tag_t> tags;
+      get_tags_in_range(tags, 0, nitems_read(0), nitems_read(0) + noutput_items);
+      update_frontend_info(tags);
 
       const float threshold_sq_low = d_thres_low_sq;
       const float threshold_sq_high = d_thres_high_sq;
@@ -150,6 +177,12 @@ namespace gr {
           //std::cout << d_peak.abs_idx << ", " << d_peak.id << ", " << threshold_sq_low << " < " << threshold_sq_high << " < " << d_peak.corr_pw_sq << ", " << corr_power << std::endl;
 
           auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);
+
+          // fticks = d_frontend_ticks + 1e9 * 
+          double dur = 1.0 * (d_peak.abs_idx - d_frontend_offset) / d_frontend_samp_rate;
+          d_frontend_ticks = size_t(1e9 * (d_frontend_secs + d_frontend_fracs + dur));
+          info = pmt::dict_add(info, pmt::mp("rx_time"),
+                           pmt::from_long(d_frontend_ticks));
 
           add_item_tag(0, d_peak.abs_idx,
                        d_tag_key,
