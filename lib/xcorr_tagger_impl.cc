@@ -109,6 +109,24 @@ namespace gr {
       volk_free(d_sequence_fq);
     }
 
+    gr_complex 
+    xcorr_tagger_impl::get_frequency_phase_rotation(const pmt::pmt_t &info)
+    {
+      gr_complex fq_comp_rot = gr_complex(1.0f, 0.0f);
+
+      if(d_use_sc_rot) {
+        pmt::pmt_t sc_rot = pmt::dict_ref(info,
+                                          pmt::mp("sc_rot"),
+                                          pmt::PMT_NIL);
+
+        if(pmt::is_complex(sc_rot)) {
+          fq_comp_rot = std::conj(pmt::to_complex(sc_rot));
+          fq_comp_rot /= std::abs(fq_comp_rot);
+        }
+      }
+      return fq_comp_rot;
+    }
+
     float
     xcorr_tagger_impl::calculate_signal_energy(const gr_complex* p_in, const int ninput_size)
     {
@@ -171,20 +189,21 @@ namespace gr {
         memcpy(out_corr, in_corr, sizeof(gr_complex) * noutput_items);
       }
 
+      const int fft_payload_len = d_fft_len / 2;
+      const int fft_payload_half_len = fft_payload_len / 2;
+
+      uint64_t tag_reg_start = ((int64_t)nitems_read(0) > block_delay) ? (nitems_read(0) - block_delay) : 0;
+      // uint64_t tag_reg_start = (int64_t)nitems_read(0);
+      uint64_t tag_reg_end = nitems_read(0) + noutput_items - block_delay; /* TODO: this might break for large fft_lens*/
+
       std::vector<tag_t> tags;
-
-      uint64_t tag_reg_start= ((int64_t)nitems_read(0) > block_delay) ? (nitems_read(0) - block_delay) : 0;
-      uint64_t tag_reg_end= nitems_read(0) + noutput_items - block_delay; /* TODO: this might break for large fft_lens*/
-
       get_tags_in_range(tags, 0,
                         tag_reg_start, tag_reg_end,
                         d_tag_key);
 
       for(tag_t tag: tags) {
+        // remove_item_tag(0, tag);
         int tag_center= tag.offset + history() - nitems_read(0);
-
-        const int fft_payload_len= d_fft_len/2;
-        const int fft_payload_half_len= fft_payload_len/2;
 
         pmt::pmt_t info = tag.value;
         uint64_t sc_idx = pmt::to_uint64(pmt::dict_ref(info, pmt::mp("sc_idx"), pmt::PMT_NIL));
@@ -196,18 +215,7 @@ namespace gr {
 
         /* Apply frequency offset correction based on input
          * from the sc_tagger block */
-        gr_complex fq_comp_rot= 1;
-
-        if(d_use_sc_rot) {
-          pmt::pmt_t sc_rot= pmt::dict_ref(info,
-                                           pmt::mp("sc_rot"),
-                                           pmt::PMT_NIL);
-
-          if(pmt::is_complex(sc_rot)) {
-            fq_comp_rot= std::conj(pmt::to_complex(sc_rot));
-            fq_comp_rot/= std::abs(fq_comp_rot);
-          }
-        }
+        gr_complex fq_comp_rot = get_frequency_phase_rotation(info);
 
         gr_complex fq_comp_acc= std::pow(fq_comp_rot, -1.0f * fft_payload_half_len);
         fq_comp_acc/= std::abs(fq_comp_acc);
@@ -232,9 +240,7 @@ namespace gr {
         volk_32fc_x2_multiply_conjugate_32fc(rwd_in, fwd_out,
                                              d_sequence_fq, d_fft_len);
 
-
         d_fft_rwd->execute();
-
 
         /* Use the correlation input to mask the
          * wrong cross-correlation peaks.
@@ -299,7 +305,7 @@ namespace gr {
           if(frame_buffer_start >= 0 and frame_buffer_start + d_sync_seq_len <= noutput_items){
             d_scale_factor = calculate_preamble_attenuation(out_pass + frame_buffer_start);
           }
-
+          
           update_peak_tag(info, d_scale_factor, power, rel_power,
                           peak / std::abs(peak), d_peak_idx,
                           tag.offset);
@@ -310,6 +316,15 @@ namespace gr {
         }
       }
 
+      get_tags_in_range(tags, 0, tag_reg_start, tag_reg_end);
+
+      for(auto t : tags){
+        if(t.key != d_tag_key){
+          std::cout << "xcorr unknown key: ";
+          pmt::print(t.value);
+          add_item_tag(0, t);
+        }
+      }
       return noutput_items;
     }
   }

@@ -25,6 +25,7 @@
 #include <volk/volk.h>
 #include <gnuradio/io_signature.h>
 #include "sc_tagger_impl.h"
+#include <chrono>
 
 namespace gr {
   namespace xfdm_sync {
@@ -47,7 +48,8 @@ namespace gr {
       d_norm_array_length(0),
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
-      d_index_key(pmt::mp("sc_idx"))
+      d_index_key(pmt::mp("sc_idx")),
+      d_time_key(pmt::mp("time"))
     {
       set_threshold_low(thres_low);
       set_threshold_high(thres_high);
@@ -101,6 +103,10 @@ namespace gr {
                            d_index_key,
                            pmt::from_uint64(idx));
 
+      const auto ticks = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+      info = pmt::dict_add(info,
+                      d_time_key,
+                      pmt::from_long(ticks));
       return info;
     }
 

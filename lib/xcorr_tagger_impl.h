@@ -59,6 +59,8 @@ namespace gr {
                            const gr_complex rotation,
                            const uint64_t idx, const uint64_t sc_offset);
 
+      gr_complex get_frequency_phase_rotation(const pmt::pmt_t &info);
+
     public:
       xcorr_tagger_impl(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key="frame_start");
       ~xcorr_tagger_impl();
