@@ -53,7 +53,7 @@ namespace gr {
     {
       set_threshold_low(thres_low);
       set_threshold_high(thres_high);
-      set_tag_propagation_policy(TPP_DONT);
+      set_tag_propagation_policy(TPP_ONE_TO_ONE);
 
       set_history(d_lookahead + 1);
 
