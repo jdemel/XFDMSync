@@ -320,8 +320,6 @@ namespace gr {
 
       for(auto t : tags){
         if(t.key != d_tag_key){
-          std::cout << "xcorr unknown key: ";
-          pmt::print(t.value);
           add_item_tag(0, t);
         }
       }
