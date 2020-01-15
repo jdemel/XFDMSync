@@ -22,6 +22,8 @@
 #define INCLUDED_XFDM_SYNC_SC_TAGGER_IMPL_H
 
 #include <xfdm_sync/sc_tagger.h>
+#include <volk/volk.h>
+#include <volk/volk_alloc.hh>
 
 namespace gr {
   namespace xfdm_sync {
@@ -35,6 +37,7 @@ namespace gr {
       int d_seq_len;
       int d_lookahead;
 
+      volk::vector<float> d_norm_vector;
       float* d_norm_array;
       int d_norm_array_length;
 

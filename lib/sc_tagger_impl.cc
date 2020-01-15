@@ -44,8 +44,7 @@ namespace gr {
       d_thres_high_sq(thres_high * thres_high),
       d_seq_len(seq_len),
       d_lookahead(2*seq_len),
-      d_norm_array(nullptr),
-      d_norm_array_length(0),
+      d_norm_vector(1024),
       d_correlation_power_key(pmt::mp("sc_corr_power")),
       d_symbol_rotation_key(pmt::mp("sc_rot")),
       d_index_key(pmt::mp("sc_idx")),
@@ -55,6 +54,7 @@ namespace gr {
       d_frontend_samp_rate(1.0),
       d_frontend_ticks(0)
     {
+      std::cout << "welcome to CTOR\n";
       set_threshold_low(thres_low);
       set_threshold_high(thres_high);
       set_tag_propagation_policy(TPP_ONE_TO_ONE);
@@ -70,8 +70,6 @@ namespace gr {
       else{
         d_tag_key = pmt::string_to_symbol(tag_key);
       }
-
-      update_norm_array_length(1024); // some sensible default.
     }
 
     sc_tagger_impl::~sc_tagger_impl()
@@ -81,11 +79,8 @@ namespace gr {
     void
     sc_tagger_impl::update_norm_array_length(const int array_len)
     {
-      if(array_len > d_norm_array_length){
-        volk_free(d_norm_array);
-        d_norm_array_length = array_len;
-        d_norm_array = (float*) volk_malloc(sizeof(float) * d_norm_array_length,
-                                            volk_get_alignment());
+      if(d_norm_vector.size() < array_len){
+        d_norm_vector.resize(array_len);
       }
     }
 
@@ -158,10 +153,10 @@ namespace gr {
       memcpy(out_corr, &in_corr[-d_lookahead], sizeof(gr_complex) * noutput_items);
 
       update_norm_array_length(noutput_items);
-      volk_32fc_magnitude_squared_32f(d_norm_array, in_corr, noutput_items);
+      volk_32fc_magnitude_squared_32f(d_norm_vector.data(), in_corr, noutput_items);
       for(int io_idx = 0; io_idx < noutput_items; io_idx++) {
         const gr_complex corr = in_corr[io_idx];
-        const float power_sq = d_norm_array[io_idx];
+        const float power_sq = d_norm_vector[io_idx];
 
         /* check if we left the peak with the current sample */
         if(d_peak.am_inside && (power_sq < threshold_sq_low)) {
