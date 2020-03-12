@@ -54,7 +54,6 @@ namespace gr {
       d_frontend_samp_rate(1.0),
       d_frontend_ticks(0)
     {
-      std::cout << "welcome to CTOR\n";
       set_threshold_low(thres_low);
       set_threshold_high(thres_high);
       set_tag_propagation_policy(TPP_ONE_TO_ONE);
