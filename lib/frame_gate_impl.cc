@@ -54,8 +54,7 @@ namespace gr {
       /* Register feedback port */
       pmt::pmt_t mpid= pmt::mp("frame_hint");
       message_port_register_in(mpid);
-      set_msg_handler(mpid,
-                      boost::bind(&frame_gate_impl::on_frame_hint, this, _1));
+      set_msg_handler(mpid, [this](pmt::pmt_t msg) { this->on_frame_hint(msg); });
 
       /* initialize attributes */
       d_frame.id= 0;

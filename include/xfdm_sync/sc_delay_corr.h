@@ -36,7 +36,7 @@ namespace gr {
     class XFDM_SYNC_API sc_delay_corr : virtual public gr::sync_block
     {
     public:
-      typedef boost::shared_ptr<sc_delay_corr> sptr;
+      typedef std::shared_ptr<sc_delay_corr> sptr;
 
       /*!
        * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_delay_corr.

@@ -36,7 +36,7 @@ namespace gr {
     class XFDM_SYNC_API sc_tagger : virtual public gr::sync_block
     {
     public:
-      typedef boost::shared_ptr<sc_tagger> sptr;
+      typedef std::shared_ptr<sc_tagger> sptr;
 
       /*!
        * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_tagger.
@@ -56,4 +56,3 @@ namespace gr {
 } // namespace gr
 
 #endif /* INCLUDED_XFDM_SYNC_SC_TAGGER_H */
-
