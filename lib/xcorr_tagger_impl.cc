@@ -104,7 +104,7 @@ namespace gr {
     xcorr_tagger_impl::~xcorr_tagger_impl()
     {
       delete d_fft_fwd;
-      delete d_fft_fwd;
+      delete d_fft_rwd;
 
       volk_free(d_sequence_fq);
     }
