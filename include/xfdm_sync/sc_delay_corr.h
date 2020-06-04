@@ -22,33 +22,33 @@
 #ifndef INCLUDED_XFDM_SYNC_SC_DELAY_CORR_H
 #define INCLUDED_XFDM_SYNC_SC_DELAY_CORR_H
 
-#include <xfdm_sync/api.h>
 #include <gnuradio/sync_block.h>
+#include <xfdm_sync/api.h>
 
 namespace gr {
-  namespace xfdm_sync {
+namespace xfdm_sync {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup xfdm_sync
+ *
+ */
+class XFDM_SYNC_API sc_delay_corr : virtual public gr::sync_block
+{
+public:
+    typedef std::shared_ptr<sc_delay_corr> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup xfdm_sync
+     * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_delay_corr.
      *
+     * To avoid accidental use of raw pointers, xfdm_sync::sc_delay_corr's
+     * constructor is in a private implementation
+     * class. xfdm_sync::sc_delay_corr::make is the public interface for
+     * creating new instances.
      */
-    class XFDM_SYNC_API sc_delay_corr : virtual public gr::sync_block
-    {
-    public:
-      typedef std::shared_ptr<sc_delay_corr> sptr;
-
-      /*!
-       * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_delay_corr.
-       *
-       * To avoid accidental use of raw pointers, xfdm_sync::sc_delay_corr's
-       * constructor is in a private implementation
-       * class. xfdm_sync::sc_delay_corr::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(int seq_len, bool normalize);
-    };
-  }
-}
+    static sptr make(int seq_len, bool normalize);
+};
+} // namespace xfdm_sync
+} // namespace gr
 
 #endif

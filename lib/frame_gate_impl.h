@@ -24,11 +24,11 @@
 #include <xfdm_sync/frame_gate.h>
 
 namespace gr {
-  namespace xfdm_sync {
-    class frame_gate_impl : public frame_gate
-    {
-    private:
-      struct {
+namespace xfdm_sync {
+class frame_gate_impl : public frame_gate
+{
+private:
+    struct {
         uint64_t id;
         bool active;
 
@@ -38,33 +38,36 @@ namespace gr {
 
         gr_complex fq_comp_acc;
         gr_complex fq_comp_rot;
-      } d_frame;
+    } d_frame;
 
-      struct {
+    struct {
         int len_prologue;
         int len_epilogue;
         int len_symbol;
         int symbols_per_frame_min;
         int symbols_per_frame_max;
         bool do_compensate;
-      } d_parameters;
+    } d_parameters;
 
-    public:
-      frame_gate_impl(int len_prologue, int len_epilogue, int len_symbol,
-                      int symbols_per_frame_min, int symbols_per_frame_max,
-                      bool do_compensate);
-      ~frame_gate_impl();
+public:
+    frame_gate_impl(int len_prologue,
+                    int len_epilogue,
+                    int len_symbol,
+                    int symbols_per_frame_min,
+                    int symbols_per_frame_max,
+                    bool do_compensate);
+    ~frame_gate_impl();
 
-      void on_frame_hint(pmt::pmt_t msg);
+    void on_frame_hint(pmt::pmt_t msg);
 
-      void forecast (int noutput_items, gr_vector_int &ninput_items_required);
+    void forecast(int noutput_items, gr_vector_int& ninput_items_required);
 
-      int general_work(int noutput_items,
-                       gr_vector_int &ninput_items,
-                       gr_vector_const_void_star &input_items,
-                       gr_vector_void_star &output_items);
-    };
-  }
-}
+    int general_work(int noutput_items,
+                     gr_vector_int& ninput_items,
+                     gr_vector_const_void_star& input_items,
+                     gr_vector_void_star& output_items);
+};
+} // namespace xfdm_sync
+} // namespace gr
 
 #endif

@@ -22,34 +22,39 @@
 #ifndef INCLUDED_XFDM_SYNC_FRAME_GATE_H
 #define INCLUDED_XFDM_SYNC_FRAME_GATE_H
 
-#include <xfdm_sync/api.h>
 #include <gnuradio/block.h>
+#include <xfdm_sync/api.h>
 
 namespace gr {
-  namespace xfdm_sync {
+namespace xfdm_sync {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup xfdm_sync
+ *
+ */
+class XFDM_SYNC_API frame_gate : virtual public gr::block
+{
+public:
+    typedef std::shared_ptr<frame_gate> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup xfdm_sync
+     * \brief Return a shared_ptr to a new instance of xfdm_sync::frame_gate.
      *
+     * To avoid accidental use of raw pointers, xfdm_sync::frame_gate's
+     * constructor is in a private implementation
+     * class. xfdm_sync::frame_gate::make is the public interface for
+     * creating new instances.
      */
-    class XFDM_SYNC_API frame_gate : virtual public gr::block
-    {
-     public:
-      typedef std::shared_ptr<frame_gate> sptr;
+    static sptr make(int len_prologue,
+                     int len_epilogue,
+                     int len_symbol,
+                     int symbols_per_frame_min,
+                     int symbols_per_frame_max,
+                     bool do_compensate);
+};
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of xfdm_sync::frame_gate.
-       *
-       * To avoid accidental use of raw pointers, xfdm_sync::frame_gate's
-       * constructor is in a private implementation
-       * class. xfdm_sync::frame_gate::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(int len_prologue, int len_epilogue, int len_symbol, int symbols_per_frame_min, int symbols_per_frame_max, bool do_compensate);
-    };
-
-  } // namespace xfdm_sync
+} // namespace xfdm_sync
 } // namespace gr
 
 #endif /* INCLUDED_XFDM_SYNC_FRAME_GATE_H */

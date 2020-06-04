@@ -27,10 +27,9 @@
 
 #include "qa_xfdm_sync.h"
 
-CppUnit::TestSuite *
-qa_xfdm_sync::suite()
+CppUnit::TestSuite* qa_xfdm_sync::suite()
 {
-  CppUnit::TestSuite *s = new CppUnit::TestSuite("xfdm_sync");
+    CppUnit::TestSuite* s = new CppUnit::TestSuite("xfdm_sync");
 
-  return s;
+    return s;
 }

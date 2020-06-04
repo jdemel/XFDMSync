@@ -22,37 +22,40 @@
 #ifndef INCLUDED_XFDM_SYNC_SC_TAGGER_H
 #define INCLUDED_XFDM_SYNC_SC_TAGGER_H
 
-#include <xfdm_sync/api.h>
 #include <gnuradio/sync_block.h>
+#include <xfdm_sync/api.h>
 
 namespace gr {
-  namespace xfdm_sync {
+namespace xfdm_sync {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup xfdm_sync
+ *
+ */
+class XFDM_SYNC_API sc_tagger : virtual public gr::sync_block
+{
+public:
+    typedef std::shared_ptr<sc_tagger> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup xfdm_sync
+     * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_tagger.
      *
+     * To avoid accidental use of raw pointers, xfdm_sync::sc_tagger's
+     * constructor is in a private implementation
+     * class. xfdm_sync::sc_tagger::make is the public interface for
+     * creating new instances.
      */
-    class XFDM_SYNC_API sc_tagger : virtual public gr::sync_block
-    {
-    public:
-      typedef std::shared_ptr<sc_tagger> sptr;
+    static sptr make(float thres_low,
+                     float thres_high,
+                     int seq_len,
+                     const std::string& tag_key = "frame_start");
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of xfdm_sync::sc_tagger.
-       *
-       * To avoid accidental use of raw pointers, xfdm_sync::sc_tagger's
-       * constructor is in a private implementation
-       * class. xfdm_sync::sc_tagger::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(float thres_low, float thres_high, int seq_len, const std::string &tag_key="frame_start");
+    virtual void set_threshold_low(float threshold) = 0;
+    virtual void set_threshold_high(float threshold) = 0;
+};
 
-      virtual void set_threshold_low(float threshold) = 0;
-      virtual void set_threshold_high(float threshold) = 0;
-    };
-
-  } // namespace xfdm_sync
+} // namespace xfdm_sync
 } // namespace gr
 
 #endif /* INCLUDED_XFDM_SYNC_SC_TAGGER_H */

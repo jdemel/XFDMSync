@@ -1,24 +1,26 @@
 {
-    "cmake.configureOnOpen": true,
-    "cmake.installPrefix": "${userHome}/prefix/gnuradio",
-    "cmake.configureSettings": {
-        "ENABLE_DOXYGEN": "False",
-    },
-    "cmake.environment":{
-        "PATH": "${userHome}/prefix/gnuradio/bin:${env.PATH}",
-        "PYTHONPATH": "${userHome}/prefix/gnuradio/lib/python3.6/site-packages:${userHome}/prefix/gnuradio/lib/python3.6/dist-packages:${userHome}/prefix/gnuradio/lib/python3/site-packages:${userHome}/prefix/gnuradio/lib/python3/dist-packages:${env.PYTHONPATH}",
-        "LD_LIBRARY_PATH": "${userHome}/prefix/gnuradio/lib:${env.LD_LIBRARY_PATH}",
-        "LIBRARY_PATH": "${userHome}/prefix/gnuradio/lib:${env.LIBRARY_PATH}",
-        "PKG_CONFIG_PATH": "${userHome}/prefix/gnuradio/lib/pkgconfig:${env.PKG_CONFIG_PATH}",
-        "PYBOMBS_PREFIX": "${userHome}/prefix/gnuradio",
-    },
     "terminal.integrated.env.linux": {
         "PATH": "${env:HOME}/prefix/gnuradio/bin:${env:PATH}",
-        "PYTHONPATH": "${env:HOME}/prefix/gnuradio/lib/python3.6/site-packages:${env:HOME}/prefix/gnuradio/lib/python3/dist-packages:${env:PYTHONPATH}",
+        "PYTHONPATH": "${env:HOME}/prefix/gnuradio/lib/python3.8/site-packages:${env:HOME}/prefix/gnuradio/lib/python3/dist-packages:${env:PYTHONPATH}",
         "LD_LIBRARY_PATH": "${env:HOME}/prefix/gnuradio/lib:${env:LD_LIBRARY_PATH}",
         "LIBRARY_PATH": "${env:HOME}/prefix/gnuradio/lib:${env:LIBRARY_PATH}",
         "PKG_CONFIG_PATH": "${env:HOME}/prefix/gnuradio/lib/pkgconfig:${env:PKG_CONFIG_PATH}",
         "PYBOMBS_PREFIX": "${env:HOME}/prefix/gnuradio",
+    },
+    "telemetry.enableTelemetry": false,
+    "terminal.integrated.shell.linux": "zsh",
+
+    "cmake.installPrefix": "${userHome}/prefix/gnuradio",
+    "cmake.environment": {
+        "PATH": "${userHome}/prefix/gnuradio/bin:${env:PATH}",
+        "PYTHONPATH": "${userHome}/prefix/gnuradio/lib/python3.8/site-packages:${userHome}/prefix/gnuradio/lib/python3.8/dist-packages:${env:PYTHONPATH}",
+        "LD_LIBRARY_PATH": "${userHome}/prefix/gnuradio/lib:${env:LD_LIBRARY_PATH}",
+        "LIBRARY_PATH": "${userHome}/prefix/gnuradio/lib:${env:LIBRARY_PATH}",
+        "PKG_CONFIG_PATH": "${userHome}/prefix/gnuradio/lib/pkgconfig:${userHome}/prefix/gnuradio/lib64/pkgconfig:${env:PKG_CONFIG_PATH}",
+        "PYBOMBS_PREFIX": "${userHome}/prefix/gnuradio",
+    },
+    "cmake.configureSettings": {
+        "ENABLE_DOXYGEN": "OFF"
     },
     "files.associations": {
         "cctype": "cpp",
