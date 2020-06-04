@@ -22,35 +22,38 @@
 #ifndef INCLUDED_XFDM_SYNC_XCORR_TAGGER_H
 #define INCLUDED_XFDM_SYNC_XCORR_TAGGER_H
 
-#include <xfdm_sync/api.h>
 #include <gnuradio/sync_block.h>
+#include <xfdm_sync/api.h>
 
 namespace gr {
-  namespace xfdm_sync {
+namespace xfdm_sync {
+
+/*!
+ * \brief <+description of block+>
+ * \ingroup xfdm_sync
+ *
+ */
+class XFDM_SYNC_API xcorr_tagger : virtual public gr::sync_block
+{
+public:
+    typedef std::shared_ptr<xcorr_tagger> sptr;
 
     /*!
-     * \brief <+description of block+>
-     * \ingroup xfdm_sync
+     * \brief Return a shared_ptr to a new instance of xfdm_sync::xcorr_tagger.
      *
+     * To avoid accidental use of raw pointers, xfdm_sync::xcorr_tagger's
+     * constructor is in a private implementation
+     * class. xfdm_sync::xcorr_tagger::make is the public interface for
+     * creating new instances.
      */
-    class XFDM_SYNC_API xcorr_tagger : virtual public gr::sync_block
-    {
-    public:
-      typedef std::shared_ptr<xcorr_tagger> sptr;
+    static sptr make(float threshold,
+                     std::vector<gr_complex> sync_sequence,
+                     bool use_sc_rot,
+                     const std::string& tag_key = "frame_start");
 
-      /*!
-       * \brief Return a shared_ptr to a new instance of xfdm_sync::xcorr_tagger.
-       *
-       * To avoid accidental use of raw pointers, xfdm_sync::xcorr_tagger's
-       * constructor is in a private implementation
-       * class. xfdm_sync::xcorr_tagger::make is the public interface for
-       * creating new instances.
-       */
-      static sptr make(float threshold, std::vector<gr_complex> sync_sequence, bool use_sc_rot, const std::string &tag_key="frame_start");
-
-      virtual void set_threshold(float threshold) = 0;
-    };
-  }
-}
+    virtual void set_threshold(float threshold) = 0;
+};
+} // namespace xfdm_sync
+} // namespace gr
 
 #endif

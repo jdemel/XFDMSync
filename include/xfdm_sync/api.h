@@ -25,9 +25,9 @@
 #include <gnuradio/attributes.h>
 
 #ifdef gnuradio_xfdm_sync_EXPORTS
-#  define XFDM_SYNC_API __GR_ATTR_EXPORT
+#define XFDM_SYNC_API __GR_ATTR_EXPORT
 #else
-#  define XFDM_SYNC_API __GR_ATTR_IMPORT
+#define XFDM_SYNC_API __GR_ATTR_IMPORT
 #endif
 
 #endif /* INCLUDED_XFDM_SYNC_API_H */
