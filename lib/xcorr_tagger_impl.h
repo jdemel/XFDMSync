@@ -22,7 +22,9 @@
 #define INCLUDED_XFDM_SYNC_XCORR_TAGGER_IMPL_H
 
 #include <gnuradio/fft/fft.h>
+#include <volk/volk_alloc.hh>
 #include <xfdm_sync/xcorr_tagger.h>
+#include <memory>
 
 namespace gr {
 namespace xfdm_sync {
@@ -30,38 +32,40 @@ namespace xfdm_sync {
 class xcorr_tagger_impl : public xcorr_tagger
 {
 private:
-    gr_complex* d_sequence_fq;
+    volk::vector<gr_complex> d_sequence_fq;
 
     float d_threshold;
     uint64_t d_peak_idx;
     uint64_t d_last_xcorr_tag_offset;
-    bool d_use_sc_rot;
+    const bool d_use_sc_rot;
     int d_fft_len;
-    int d_sync_seq_len;
-    float d_reference_preamble_energy;
+    const int d_sync_seq_len;
+    const float d_reference_preamble_energy;
     float d_scale_factor;
 
-    pmt::pmt_t d_tag_key;
-    const pmt::pmt_t d_scale_factor_key;
-    const pmt::pmt_t d_correlation_power_key;
-    const pmt::pmt_t d_relative_correlation_power_key;
-    const pmt::pmt_t d_rotation_key;
-    const pmt::pmt_t d_index_key;
-    const pmt::pmt_t d_sc_offset_key;
+    const pmt::pmt_t d_tag_key;
+    const pmt::pmt_t d_scale_factor_key = pmt::mp("scale_factor");
+    const pmt::pmt_t d_correlation_power_key = pmt::mp("xcorr_power");
+    const pmt::pmt_t d_relative_correlation_power_key = pmt::mp("xcorr_rel_power");
+    const pmt::pmt_t d_rotation_key = pmt::mp("xcorr_rot");
+    const pmt::pmt_t d_index_key = pmt::mp("xcorr_idx");
+    const pmt::pmt_t d_sc_offset_key = pmt::mp("sc_offset");
+    const pmt::pmt_t d_xc_offset_key = pmt::mp("xcorr_offset");
 
-    gr::fft::fft_complex* d_fft_fwd;
-    gr::fft::fft_complex* d_fft_rwd;
+    std::unique_ptr<gr::fft::fft_complex> d_fft_fwd;
+    std::unique_ptr<gr::fft::fft_complex> d_fft_rwd;
 
     float calculate_signal_energy(const gr_complex* p_in, const int ninput_size);
     float calculate_preamble_attenuation(const gr_complex* p_in);
 
-    void update_peak_tag(pmt::pmt_t& info,
-                         const float scale_factor,
-                         const float power,
-                         const float rel_power,
-                         const gr_complex rotation,
-                         const uint64_t idx,
-                         const uint64_t sc_offset);
+    void update_peak_tag_info(pmt::pmt_t& info,
+                              const float scale_factor,
+                              const float power,
+                              const float rel_power,
+                              const gr_complex rotation,
+                              const uint64_t idx,
+                              const uint64_t sc_offset,
+                              const uint64_t tag_offset);
 
     gr_complex get_frequency_phase_rotation(const pmt::pmt_t& info);
 

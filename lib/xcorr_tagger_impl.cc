@@ -45,23 +45,20 @@ xcorr_tagger_impl::xcorr_tagger_impl(float threshold,
     : gr::sync_block("xcorr_tagger",
                      gr::io_signature::make(2, 2, sizeof(gr_complex)),
                      gr::io_signature::make(1, 2, sizeof(gr_complex))),
+      d_sequence_fq(32),
       d_threshold(threshold),
       d_peak_idx(0),
       d_use_sc_rot(use_sc_rot),
       d_sync_seq_len(sync_sequence.size()),
+      d_reference_preamble_energy(
+          calculate_signal_energy(sync_sequence.data(), sync_sequence.size())),
       d_scale_factor(1.0f),
-      d_scale_factor_key(pmt::mp("scale_factor")),
-      d_correlation_power_key(pmt::mp("xcorr_power")),
-      d_relative_correlation_power_key(pmt::mp("xcorr_rel_power")),
-      d_rotation_key(pmt::mp("xcorr_rot")),
-      d_index_key(pmt::mp("xcorr_idx")),
-      d_sc_offset_key(pmt::mp("sc_offset")),
-      d_last_xcorr_tag_offset(0)
+      d_last_xcorr_tag_offset(0),
+      d_tag_key(pmt::mp(tag_key.empty() ? "foo_start" : tag_key))
 {
     set_tag_propagation_policy(TPP_DONT);
 
-    int seq_len = sync_sequence.size();
-    d_reference_preamble_energy = calculate_signal_energy(&sync_sequence[0], seq_len);
+    const int seq_len = sync_sequence.size();
 
     /* Find a power-of-two fft length that can fit
      * the synchronization pattern, an equally sized
@@ -74,45 +71,31 @@ xcorr_tagger_impl::xcorr_tagger_impl(float threshold,
     set_history(d_fft_len / 2);
 
     /* Allocate space for the fourier-transformed sequence */
-    d_sequence_fq =
-        (gr_complex*)volk_malloc(sizeof(gr_complex) * d_fft_len, volk_get_alignment());
+    d_sequence_fq.resize(d_fft_len);
 
     /* Let the GNURadio wrapper setup some fftw contexts */
-    d_fft_fwd = new gr::fft::fft_complex(d_fft_len, true, 1);
-    d_fft_rwd = new gr::fft::fft_complex(d_fft_len, false, 1);
+    d_fft_fwd = std::unique_ptr<gr::fft::fft_complex>(
+        new gr::fft::fft_complex(d_fft_len, true, 1));
+    d_fft_rwd = std::unique_ptr<gr::fft::fft_complex>(
+        new gr::fft::fft_complex(d_fft_len, false, 1));
 
-    gr_complex* fwd_in = d_fft_fwd->get_inbuf();
-    gr_complex* fwd_out = d_fft_fwd->get_outbuf();
-
-    /* Transform the referece sequence to the frequency
+    /* Transform the reference sequence to the frequency
      * domain for fast crosscorrelation later */
-    memset(fwd_in, 0, sizeof(gr_complex) * d_fft_len);
-    for (int i = 0; i < seq_len; i++) {
-        fwd_in[i] = sync_sequence[i];
-    }
+    memset(d_fft_fwd->get_inbuf(), 0, sizeof(gr_complex) * d_fft_len);
+    memcpy(d_fft_fwd->get_inbuf(),
+           sync_sequence.data(),
+           sizeof(gr_complex) * sync_sequence.size());
 
     d_fft_fwd->execute();
 
-    memcpy(d_sequence_fq, fwd_out, sizeof(gr_complex) * d_fft_len);
+    memcpy(d_sequence_fq.data(), d_fft_fwd->get_outbuf(), sizeof(gr_complex) * d_fft_len);
 
     /* Clear the input buffer.
      * It will be assumed to be zeroed later */
-    memset(fwd_in, 0, sizeof(gr_complex) * d_fft_len);
-
-    if (tag_key.empty()) {
-        d_tag_key = pmt::string_to_symbol("frame_start");
-    } else {
-        d_tag_key = pmt::string_to_symbol(tag_key);
-    }
+    memset(d_fft_fwd->get_inbuf(), 0, sizeof(gr_complex) * d_fft_len);
 }
 
-xcorr_tagger_impl::~xcorr_tagger_impl()
-{
-    delete d_fft_fwd;
-    delete d_fft_rwd;
-
-    volk_free(d_sequence_fq);
-}
+xcorr_tagger_impl::~xcorr_tagger_impl() {}
 
 gr_complex xcorr_tagger_impl::get_frequency_phase_rotation(const pmt::pmt_t& info)
 {
@@ -143,13 +126,14 @@ float xcorr_tagger_impl::calculate_preamble_attenuation(const gr_complex* p_in)
                      calculate_signal_energy(p_in, d_sync_seq_len));
 }
 
-void xcorr_tagger_impl::update_peak_tag(pmt::pmt_t& info,
-                                        const float scale_factor,
-                                        const float power,
-                                        const float rel_power,
-                                        const gr_complex rotation,
-                                        const uint64_t idx,
-                                        const uint64_t sc_offset)
+void xcorr_tagger_impl::update_peak_tag_info(pmt::pmt_t& info,
+                                             const float scale_factor,
+                                             const float power,
+                                             const float rel_power,
+                                             const gr_complex rotation,
+                                             const uint64_t idx,
+                                             const uint64_t sc_offset,
+                                             const uint64_t tag_offset)
 {
     info = pmt::dict_add(info, d_scale_factor_key, pmt::from_double(scale_factor));
 
@@ -163,6 +147,7 @@ void xcorr_tagger_impl::update_peak_tag(pmt::pmt_t& info,
     info = pmt::dict_add(info, d_index_key, pmt::from_uint64(idx));
 
     info = pmt::dict_add(info, d_sc_offset_key, pmt::from_uint64(sc_offset));
+    info = pmt::dict_add(info, d_xc_offset_key, pmt::from_uint64(tag_offset));
 }
 
 int xcorr_tagger_impl::work(int noutput_items,
@@ -172,7 +157,6 @@ int xcorr_tagger_impl::work(int noutput_items,
     const gr_complex* in_pass_history = (const gr_complex*)input_items[0];
     const gr_complex* in_corr_history = (const gr_complex*)input_items[1];
     gr_complex* out_pass = (gr_complex*)output_items[0];
-    // gr_complex *out_corr = (gr_complex *) output_items[1];
 
     /* The history is d_fft_len/2 samples long.
      * The indexing done below allows us to read in_pass and in_corr
@@ -237,7 +221,8 @@ int xcorr_tagger_impl::work(int noutput_items,
         d_fft_fwd->execute();
 
         // Fill reverse fft buffer
-        volk_32fc_x2_multiply_conjugate_32fc(rwd_in, fwd_out, d_sequence_fq, d_fft_len);
+        volk_32fc_x2_multiply_conjugate_32fc(
+            rwd_in, fwd_out, d_sequence_fq.data(), d_fft_len);
 
         d_fft_rwd->execute();
 
@@ -304,13 +289,14 @@ int xcorr_tagger_impl::work(int noutput_items,
                     calculate_preamble_attenuation(out_pass + frame_buffer_start);
             }
 
-            update_peak_tag(info,
-                            d_scale_factor,
-                            power,
-                            rel_power,
-                            peak / std::abs(peak),
-                            d_peak_idx,
-                            tag.offset);
+            update_peak_tag_info(info,
+                                 d_scale_factor,
+                                 power,
+                                 rel_power,
+                                 peak / std::abs(peak),
+                                 d_peak_idx,
+                                 tag.offset,
+                                 peak_offset);
 
             add_item_tag(0, peak_offset, d_tag_key, info);
 
