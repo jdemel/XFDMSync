@@ -25,5 +25,6 @@ install(FILES
     sc_delay_corr.h
     sc_tagger.h
     xcorr_tagger.h
-    frame_gate.h DESTINATION include/xfdm_sync
+    frame_gate.h
+    sync_tag_align_cc.h DESTINATION include/xfdm_sync
 )

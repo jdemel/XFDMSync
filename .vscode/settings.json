@@ -87,5 +87,6 @@
         "typeindex": "cpp",
         "variant": "cpp"
     },
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "python.formatting.provider": "black"
 }

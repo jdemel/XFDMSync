@@ -12,6 +12,7 @@
 #include "xfdm_sync/sc_tagger.h"
 #include "xfdm_sync/xcorr_tagger.h"
 #include "xfdm_sync/frame_gate.h"
+#include "xfdm_sync/sync_tag_align_cc.h"
 %}
 
 
@@ -26,3 +27,5 @@ GR_SWIG_BLOCK_MAGIC2(xfdm_sync, xcorr_tagger);
 
 %include "xfdm_sync/frame_gate.h"
 GR_SWIG_BLOCK_MAGIC2(xfdm_sync, frame_gate);
+%include "xfdm_sync/sync_tag_align_cc.h"
+GR_SWIG_BLOCK_MAGIC2(xfdm_sync, sync_tag_align_cc);

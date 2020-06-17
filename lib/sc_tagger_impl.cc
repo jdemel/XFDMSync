@@ -111,6 +111,10 @@ void sc_tagger_impl::update_frontend_info(const std::vector<tag_t>& tags)
             d_frontend_secs = (double)pmt::to_uint64(pmt::tuple_ref(t.value, 0));
             d_frontend_fracs = pmt::to_double(pmt::tuple_ref(t.value, 1));
             d_frontend_ticks = size_t(1e9 * (d_frontend_secs + d_frontend_fracs));
+            GR_LOG_DEBUG(this->d_logger,
+                         "Received new tag @offset=" + std::to_string(d_frontend_offset) +
+                             ", with (" + std::to_string(d_frontend_secs) + " - " +
+                             std::to_string(d_frontend_fracs) + "s)");
         }
         if (t.key == pmt::mp("rx_rate")) {
             d_frontend_samp_rate = pmt::to_double(t.value);
@@ -162,7 +166,8 @@ int sc_tagger_impl::work(int noutput_items,
             gr_complex rot_per_sym = std::pow(d_peak.corr, 1.0f / d_seq_len);
             rot_per_sym /= std::abs(rot_per_sym);
             // std::cout << d_peak.abs_idx << ", " << d_peak.id << ", " <<
-            // threshold_sq_low << " < " << threshold_sq_high << " < " << d_peak.corr_pw_sq
+            // threshold_sq_low << " < " << threshold_sq_high << " < " <<
+            // d_peak.corr_pw_sq
             // << ", " << corr_power << std::endl;
 
             auto info = make_peak_tag(corr_power, rot_per_sym, d_peak.id);

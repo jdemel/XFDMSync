@@ -1,6 +1,6 @@
 id: xfdm_sync_xcorr_tagger
 label: Cross-correlation tagger
-category: '[xfdm_sync]'
+category: "[xfdm_sync]"
 
 templates:
   imports: import xfdm_sync
@@ -9,34 +9,34 @@ templates:
     - set_threshold(${threshold})
 
 parameters:
-- id: threshold
-  label: Detection threshold
-  dtype: float
-- id: sync_sequence
-  label: Synchronization sequence
-  dtype: complex_vector
-- id: use_sc_rot
-  label: compensate freq. offset
-  dtype: int
-- id: tag_key
-  label: Tag Key
-  dtype: string
+  - id: threshold
+    label: Detection threshold
+    dtype: float
+  - id: sync_sequence
+    label: Synchronization sequence
+    dtype: complex_vector
+  - id: use_sc_rot
+    label: compensate freq. offset
+    dtype: int
+  - id: tag_key
+    label: Tag Key
+    dtype: string
 
 inputs:
-- label: in_pass
-  domain: stream
-  dtype: complex
-- label: in_corr
-  domain: stream
-  dtype: complex
+  - label: in_pass
+    domain: stream
+    dtype: complex
+  - label: in_corr
+    domain: stream
+    dtype: complex
 
 outputs:
-- label: out_pass
-  domain: stream
-  dtype: complex
-- label: out_corr
-  domain: stream
-  dtype: complex
-  optional: 1
+  - label: out_pass
+    domain: stream
+    dtype: complex
+  - label: out_corr
+    domain: stream
+    dtype: complex
+    optional: 1
 
 file_format: 1

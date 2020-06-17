@@ -48,3 +48,4 @@ GR_ADD_TEST(qa_xcorr_tagger ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_
 GR_ADD_TEST(qa_frame_gate ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_frame_gate.py)
 GR_ADD_TEST(qa_fqsweep_corr ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_fqsweep_corr.py)
 GR_ADD_TEST(qa_burstsilence_corr ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_burstsilence_corr.py)
+GR_ADD_TEST(qa_sync_tag_align_cc ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/qa_sync_tag_align_cc.py)
