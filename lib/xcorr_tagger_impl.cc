@@ -252,16 +252,13 @@ int xcorr_tagger_impl::work(int noutput_items,
         memcpy(out_corr, in_corr, sizeof(gr_complex) * noutput_items);
     }
 
-    const int fft_payload_len = d_correlator->fft_size() / 2;
-    const int fft_payload_half_len = fft_payload_len / 2;
     const unsigned fft_len = d_correlator->fft_size();
     const unsigned half_fft_len = d_correlator->fft_size() / 2;
     const unsigned quarter_fft_len = d_correlator->fft_size() / 4;
     const unsigned three_quarter_fft_len = half_fft_len + quarter_fft_len;
 
     const uint64_t tag_reg_start = nitems_read(0);
-    uint64_t tag_reg_end = nitems_read(0) + noutput_items;
-
+    const uint64_t tag_reg_end = nitems_read(0) + noutput_items;
     std::vector<tag_t> tags;
     get_tags_in_range(tags, 0, tag_reg_start, tag_reg_end, d_tag_key);
     std::sort(tags.begin(), tags.end(), tag_t::offset_compare);
@@ -271,7 +268,8 @@ int xcorr_tagger_impl::work(int noutput_items,
             continue;
         }
         const uint64_t buffer_tag_offset = tag.offset - nitems_read(0);
-        if ((int64_t)buffer_tag_offset > (int64_t)(noutput_items - (int64_t)three_quarter_fft_len)) {
+        if ((int64_t)buffer_tag_offset >
+            (int64_t)(noutput_items - (int64_t)three_quarter_fft_len)) {
             noutput_items = buffer_tag_offset - half_fft_len;
             break;
         }
@@ -288,26 +286,29 @@ int xcorr_tagger_impl::work(int noutput_items,
 
         peak_t peak = find_correlation_peak(d_correlation_values, half_fft_len);
 
-        const int32_t peak_idx = peak.offset - quarter_fft_len;
-
         if (peak.relative_power > d_threshold) {
-            // if (tag.offset + peak_idx < nitems_read(0)) {
+            const int32_t peak_idx = peak.offset - quarter_fft_len;
+            const uint64_t raw_peak_offset = tag.offset + peak_idx;
+            // if (raw_peak_offset < nitems_read(0)) {
             //     int64_t past =  buffer_tag_offset + peak_idx;
             //     GR_LOG_ERROR(d_logger,
-            //                  "LIVING IN THE PAST! " + std::to_string(tag.offset + peak_idx) +
-            //                      "  < " + std::to_string(nitems_read(0)) + ", samples: " +
-            //                      std::to_string(past));
+            //                  "LIVING IN THE PAST! " + std::to_string(tag.offset +
+            //                  peak_idx) +
+            //                      "  < " + std::to_string(nitems_read(0)) + ", samples:
+            //                      " + std::to_string(past));
             //     GR_LOG_ERROR(d_logger,
             //                  "tag.offset=" + std::to_string(tag.offset) +
-            //                      ", buffer_offset=" + std::to_string(buffer_tag_offset) +
-            //                      ", ptr_offset" + std::to_string(buf_ptr_offset) + ", peak=" + std::to_string(peak_idx));
+            //                      ", buffer_offset=" + std::to_string(buffer_tag_offset)
+            //                      +
+            //                      ", ptr_offset" + std::to_string(buf_ptr_offset) + ",
+            //                      peak=" + std::to_string(peak_idx));
             // } else
-            if (tag.offset + peak_idx > nitems_read(0) + noutput_items) {
+            if (raw_peak_offset > nitems_read(0) + noutput_items) {
                 GR_LOG_ERROR(d_logger,
-                             "INTO THE FUTURE! " + std::to_string(tag.offset + peak_idx) +
+                             "INTO THE FUTURE! " + std::to_string(raw_peak_offset) +
                                  "  > " + std::to_string(nitems_read(0) + noutput_items) +
                                  ", samples: " +
-                                 std::to_string(tag.offset + peak_idx - nitems_read(0) +
+                                 std::to_string(raw_peak_offset - nitems_read(0) +
                                                 noutput_items));
                 GR_LOG_ERROR(d_logger,
                              "tag.offset=" + std::to_string(tag.offset) +
@@ -315,13 +316,13 @@ int xcorr_tagger_impl::work(int noutput_items,
                                  ", ptr_offset" + std::to_string(buf_ptr_offset) +
                                  "nout=" + std::to_string(noutput_items));
             }
-            const uint64_t peak_offset = std::max(tag.offset + peak_idx, nitems_read(0));
+            const uint64_t peak_offset = std::max(raw_peak_offset, nitems_read(0));
             if (peak_offset == d_last_xcorr_tag_offset) {
                 continue;
             }
             d_last_xcorr_tag_offset = peak_offset;
-            const int64_t frame_buffer_start = peak_offset - nitems_written(0);
 
+            const int64_t frame_buffer_start = peak_offset - nitems_written(0);
             d_scale_factor = calculate_preamble_attenuation(in_pass + frame_buffer_start);
 
             pmt::pmt_t info = tag.value;
@@ -340,7 +341,6 @@ int xcorr_tagger_impl::work(int noutput_items,
     }
 
     get_tags_in_range(tags, 0, tag_reg_start, tag_reg_end);
-
     for (auto t : tags) {
         if (t.key != d_tag_key) {
             add_item_tag(0, t);
