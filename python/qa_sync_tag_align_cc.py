@@ -26,9 +26,12 @@ class qa_sync_tag_align_cc(gr_unittest.TestCase):
 
         tagger = xfdm_sync.sync_tag_align_cc(n_streams, sync_key)
 
-        tag = gr.python_to_tag(
-            (3000, pmt.intern(sync_key), pmt.PMT_T, pmt.intern("qa"))
-        )
+        tags = []
+        for i in range(3):
+            tag = gr.python_to_tag(
+                (3000 + 30 * i, pmt.intern(sync_key), pmt.PMT_T, pmt.intern("qa"))
+            )
+            tags.append(tag)
 
         srcs = []
         snks = []
@@ -42,7 +45,7 @@ class qa_sync_tag_align_cc(gr_unittest.TestCase):
             self.tb.connect(src, (tagger, i), snk)
             srcs.append(src)
             snks.append(snk)
-        srcs[0].set_data(testdata[0].tolist(), (tag,))
+        srcs[0].set_data(testdata[0].tolist(), tags)
 
         self.tb.run()
 
@@ -52,7 +55,7 @@ class qa_sync_tag_align_cc(gr_unittest.TestCase):
             self.assertComplexTuplesAlmostEqual(r, d)
 
         for s in snks:
-            for t in s.tags():
+            for tag, t in zip(tags, s.tags()):
                 self.assertEqual(t.offset, tag.offset)
                 self.assertTrue(pmt.eq(t.key, tag.key))
                 self.assertTrue(pmt.eq(t.value, tag.value))
