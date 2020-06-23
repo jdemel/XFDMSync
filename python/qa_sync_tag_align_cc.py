@@ -8,7 +8,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import xfdm_sync_swig as xfdm_sync
+import xfdm_sync_python as xfdm_sync
 import pmt
 import numpy as np
 

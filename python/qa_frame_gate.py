@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # Copyright 2017 Leonard Göhrs.
@@ -21,7 +21,7 @@
 
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
-import xfdm_sync_swig as xfdm_sync
+import xfdm_sync_python as xfdm_sync
 
 class qa_frame_gate (gr_unittest.TestCase):
 
@@ -33,6 +33,7 @@ class qa_frame_gate (gr_unittest.TestCase):
 
     def test_001_t (self):
         # set up fg
+        dut = xfdm_sync.frame_gate(8, 8, 64, 4, 8, True)
         self.tb.run ()
         # check data
 

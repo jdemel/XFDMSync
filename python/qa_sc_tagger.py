@@ -23,7 +23,7 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import pmt
-import xfdm_sync_swig as xfdm_sync
+import xfdm_sync_python as xfdm_sync
 import numpy as np
 
 
@@ -36,15 +36,12 @@ class qa_sc_tagger(gr_unittest.TestCase):
         self.tb = None
 
     def test_001_t(self):
-        print('WTF!')
         # generate a random Schmidl&Cox preamble
         d = np.random.normal(0.0, 1, 32) + \
             1j * np.random.normal(0.0, 1, 32)
         s = np.zeros(64, dtype=np.complex)
         s[::2] = d
         sync_seq = np.fft.ifft(s)
-
-        print('TEST')
 
         # prepare a data vector with the given preamble
         testdata = np.random.normal(0.0, 1e-3, 6000) + \
@@ -54,6 +51,8 @@ class qa_sc_tagger(gr_unittest.TestCase):
         src = blocks.vector_source_c(testdata)
         corr = xfdm_sync.sc_delay_corr(sync_seq.size // 2, True)
         dut = xfdm_sync.sc_tagger(0.6, 0.7, sync_seq.size // 2, "frame_start")
+        dut.set_threshold_low(0.7)
+        dut.set_threshold_high(0.8)
         snk0 = blocks.vector_sink_c()
         snk1 = blocks.vector_sink_c()
         self.tb.connect(src, corr)
@@ -61,8 +60,6 @@ class qa_sc_tagger(gr_unittest.TestCase):
         self.tb.connect((corr, 1), (dut, 1))
         self.tb.connect((dut, 0), snk0)
         self.tb.connect((dut, 1), snk1)
-
-        print('still running --> run fg')
 
         # set up fg
         self.tb.run()

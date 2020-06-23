@@ -29,7 +29,7 @@ namespace gr {
 namespace xfdm_sync {
 
 /*!
- * \brief <+description of block+>
+ * \brief Extract frame, detected by correlators
  * \ingroup xfdm_sync
  *
  */

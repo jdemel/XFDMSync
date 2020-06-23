@@ -15,9 +15,11 @@ namespace gr {
 namespace xfdm_sync {
 
 /*!
- * \brief <+description of block+>
+ * \brief Make sure parallel streams share tags
  * \ingroup xfdm_sync
  *
+ * In case of multiple RX streams, one needs a way to ensure that multiple streams detect
+ * peaks at roughly the same positions.
  */
 class XFDM_SYNC_API sync_tag_align_cc : virtual public gr::sync_block
 {

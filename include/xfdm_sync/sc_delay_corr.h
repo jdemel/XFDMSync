@@ -29,7 +29,7 @@ namespace gr {
 namespace xfdm_sync {
 
 /*!
- * \brief <+description of block+>
+ * \brief Calculate fixed lag auto-correlation
  * \ingroup xfdm_sync
  *
  */

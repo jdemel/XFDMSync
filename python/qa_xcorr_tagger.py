@@ -23,7 +23,7 @@
 from gnuradio import gr, gr_unittest
 from gnuradio import blocks
 import pmt
-import xfdm_sync_swig as xfdm_sync
+import xfdm_sync_python as xfdm_sync
 import numpy as np
 
 # import os
@@ -74,6 +74,7 @@ class qa_xcorr_tagger(gr_unittest.TestCase):
         src1 = blocks.vector_source_c(sc_data, tags=tags)
 
         dut = xfdm_sync.xcorr_tagger(30.0, sync_seq.tolist(), True, "frame_start")
+        dut.set_threshold(31.)
         snk0 = blocks.vector_sink_c()
         snk1 = blocks.vector_sink_c()
         self.tb.connect((src0, 0), (dut, 0))

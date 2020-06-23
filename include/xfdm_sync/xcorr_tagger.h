@@ -29,7 +29,7 @@ namespace gr {
 namespace xfdm_sync {
 
 /*!
- * \brief <+description of block+>
+ * \brief Cross-correlate around detected fixed-lag auto-correlation peaks
  * \ingroup xfdm_sync
  *
  */
