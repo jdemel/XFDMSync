@@ -304,12 +304,11 @@ int xcorr_tagger_impl::work(int noutput_items,
             //                      peak=" + std::to_string(peak_idx));
             // } else
             if (raw_peak_offset > nitems_read(0) + noutput_items) {
-                GR_LOG_ERROR(d_logger,
-                             "INTO THE FUTURE! " + std::to_string(raw_peak_offset) +
-                                 "  > " + std::to_string(nitems_read(0) + noutput_items) +
-                                 ", samples: " +
-                                 std::to_string(raw_peak_offset - nitems_read(0) +
-                                                noutput_items));
+                GR_LOG_ERROR(
+                    d_logger,
+                    "INTO THE FUTURE! " + std::to_string(raw_peak_offset) + "  > " +
+                        std::to_string(nitems_read(0) + noutput_items) + ", samples: " +
+                        std::to_string(raw_peak_offset - nitems_read(0) + noutput_items));
                 GR_LOG_ERROR(d_logger,
                              "tag.offset=" + std::to_string(tag.offset) +
                                  ", buffer_offset=" + std::to_string(buffer_tag_offset) +

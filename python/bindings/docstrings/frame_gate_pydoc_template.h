@@ -7,7 +7,7 @@
  *
  */
 #include "pydoc_macros.h"
-#define D(...) DOC(gr,xfdm_sync, __VA_ARGS__ )
+#define D(...) DOC(gr, xfdm_sync, __VA_ARGS__)
 /*
   This file contains placeholders for docstrings for the Python bindings.
   Do not edit! These were automatically extracted during the binding process
@@ -15,8 +15,7 @@
  */
 
 
+static const char* __doc_gr_xfdm_sync_frame_gate = R"doc()doc";
 
- static const char *__doc_gr_xfdm_sync_frame_gate = R"doc()doc";
 
-
- static const char *__doc_gr_xfdm_sync_frame_gate = R"doc()doc";
+static const char* __doc_gr_xfdm_sync_frame_gate = R"doc()doc";

@@ -65,9 +65,7 @@ int sync_tag_align_cc_impl::work(int noutput_items,
             //              "Found tags: @" + std::to_string(nitems_read(i)) +
             //                  " in stream: " + std::to_string(i));
             done = false;
-            std::sort(tags.begin(),
-                      tags.begin(),
-                      tag_t::offset_compare);
+            std::sort(tags.begin(), tags.begin(), tag_t::offset_compare);
         }
         stream_input_tags.push_back(tags);
     }
@@ -96,10 +94,10 @@ int sync_tag_align_cc_impl::work(int noutput_items,
                                           ? stream_input_tags[i][positions[i]].offset
                                           : std::numeric_limits<uint64_t>::max();
             if (t_offset > offset + 1000) {
-              GR_LOG_DEBUG(d_logger,
-                         "Add tag with offset=" + std::to_string(share_tag.offset) +
-                         " co=" + std::to_string(offset) +
-                             " in stream: " + std::to_string(i));
+                GR_LOG_DEBUG(d_logger,
+                             "Add tag with offset=" + std::to_string(share_tag.offset) +
+                                 " co=" + std::to_string(offset) +
+                                 " in stream: " + std::to_string(i));
                 add_item_tag(i, share_tag);
             } else {
                 positions.at(i) += 1;
