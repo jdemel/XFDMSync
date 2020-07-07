@@ -63,17 +63,23 @@ int sync_tag_align_cc_impl::work(int noutput_items,
     bool found_tags = false;
     size_t num_tags = 0;
     for (unsigned i = 0; i < d_num_ports; ++i) {
-        std::vector<gr::tag_t> tags;
+        // std::vector<gr::tag_t> tags;
         get_tags_in_range(stream_input_tags[i],
                           i,
                           nitems_read(i),
                           nitems_read(i) + noutput_items,
                           d_key);
         if (stream_input_tags[i].size() > 0) {
-            GR_LOG_DEBUG(d_logger,
-                         "Found " + std::to_string(stream_input_tags[i].size()) +
-                             " tags: @" + std::to_string(nitems_read(i)) +
-                             " in stream: " + std::to_string(i));
+            // std::string offset_str("");
+            // for (const auto& t : stream_input_tags[i]) {
+            //     offset_str += std::to_string(t.offset) + "\t";
+            // }
+
+            // GR_LOG_DEBUG(d_logger,
+            //              "Found " + std::to_string(stream_input_tags[i].size()) +
+            //                  " tags: @" + std::to_string(nitems_read(i)) +
+            //                  " in stream: " + std::to_string(i) +
+            //                  "\toffsets: " + offset_str);
             done = false;
             found_tags = true;
             std::sort(stream_input_tags[i].begin(),
@@ -103,11 +109,11 @@ int sync_tag_align_cc_impl::work(int noutput_items,
             const uint64_t t_offset = stream_input_tags[i].size() > positions[i]
                                           ? stream_input_tags[i][positions[i]].offset
                                           : std::numeric_limits<uint64_t>::max();
-            GR_LOG_DEBUG(d_logger,
-                         "Search stream=" + std::to_string(i) +
-                             "\t#tags=" + std::to_string(stream_input_tags[i].size()) +
-                             "\twith offset=" + std::to_string(t_offset) +
-                             "\tMINoffset=" + std::to_string(offset));
+            // GR_LOG_DEBUG(d_logger,
+            //              "Search stream=" + std::to_string(i) +
+            //                  "\t#tags=" + std::to_string(stream_input_tags[i].size()) +
+            //                  "\twith offset=" + std::to_string(t_offset) +
+            //                  "\tMINoffset=" + std::to_string(offset));
             if (offset > t_offset) {
                 share_tag_stream = i;
                 share_tag_pos = positions[i];
@@ -124,19 +130,33 @@ int sync_tag_align_cc_impl::work(int noutput_items,
                                           ? stream_input_tags[i][positions[i]].offset
                                           : std::numeric_limits<uint64_t>::max();
             if (t_offset > offset + d_max_tag_offset_difference) {
-                auto& share_tag = stream_input_tags[share_tag_stream][share_tag_pos];
+                auto share_tag = stream_input_tags[share_tag_stream][share_tag_pos];
+                const uint64_t xcorr_idx = pmt::to_uint64(pmt::dict_ref(
+                    share_tag.value, pmt::mp("xcorr_idx"), pmt::from_uint64(0)));
                 GR_LOG_DEBUG(d_logger,
                              "Add tag with offset=" + std::to_string(share_tag.offset) +
                                  " co=" + std::to_string(t_offset) +
-                                 " in stream: " + std::to_string(i));
-                add_item_tag(i, share_tag);
+                                 " in stream: " + std::to_string(i) +
+                                 " share_stream: " + std::to_string(share_tag_stream) +
+                                 " share_pos: " + std::to_string(share_tag_pos) +
+                                 " xcorr_idx: " + std::to_string(xcorr_idx));
+                add_item_tag(i,
+                             share_tag.offset,
+                             share_tag.key,
+                             share_tag.value,
+                             pmt::mp(name() + "_S" + std::to_string(i)));
+                // add_item_tag(i, share_tag);
                 d_added_port_tag_counters[i] += 1;
             } else {
-                positions.at(i) += 1;
-                GR_LOG_DEBUG(d_logger,
-                             "Haz tag with offset=" + std::to_string(offset) +
-                                 " co=" + std::to_string(t_offset) +
-                                 " in stream: " + std::to_string(i));
+                // auto& tag = stream_input_tags[i][positions[i]];
+                // const uint64_t xcorr_idx = pmt::to_uint64(
+                //     pmt::dict_ref(tag.value, pmt::mp("xcorr_idx"), pmt::from_uint64(0)));
+                // GR_LOG_DEBUG(d_logger,
+                //              "Haz tag with offset=" + std::to_string(offset) +
+                //                  " co=" + std::to_string(t_offset) +
+                //                  " in stream: " + std::to_string(i) +
+                //                  " xcorr_idx: " + std::to_string(xcorr_idx));
+                positions[i] += 1;
             }
         }
 
