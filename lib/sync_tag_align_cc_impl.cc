@@ -61,7 +61,7 @@ int sync_tag_align_cc_impl::work(int noutput_items,
     std::vector<std::vector<gr::tag_t>> stream_input_tags(d_num_ports);
     bool done = true;
     bool found_tags = false;
-    size_t num_tags = 0;
+    // size_t num_tags = 0;
     for (unsigned i = 0; i < d_num_ports; ++i) {
         // std::vector<gr::tag_t> tags;
         get_tags_in_range(stream_input_tags[i],
@@ -86,16 +86,16 @@ int sync_tag_align_cc_impl::work(int noutput_items,
                       stream_input_tags[i].begin(),
                       tag_t::offset_compare);
             d_inport_tag_counters[i] += stream_input_tags[i].size();
-            num_tags = stream_input_tags[i].size();
+            // num_tags = stream_input_tags[i].size();
         }
         // stream_input_tags.push_back(tags);
     }
 
-    for (unsigned i = 0; i < d_num_ports; ++i) {
-        if (stream_input_tags[i].size() != num_tags) {
-            GR_LOG_DEBUG(d_logger, "\n\nCareful! There's a tag mismatch!\n\n");
-        }
-    }
+    // for (unsigned i = 0; i < d_num_ports; ++i) {
+    //     if (stream_input_tags[i].size() != num_tags) {
+    //         GR_LOG_DEBUG(d_logger, "\n\nCareful! There's a tag mismatch!\n\n");
+    //     }
+    // }
 
     std::vector<unsigned> positions(d_num_ports, 0);
 
