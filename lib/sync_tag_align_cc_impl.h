@@ -19,6 +19,11 @@ private:
     const unsigned d_num_ports;
     const std::string d_tag_key;
     const pmt::pmt_t d_key;
+    const uint64_t d_max_tag_offset_difference = 3;
+
+    std::vector<uint64_t> d_port_tag_counters;
+    std::vector<uint64_t> d_inport_tag_counters;
+    std::vector<uint64_t> d_added_port_tag_counters;
 
 public:
     sync_tag_align_cc_impl(const unsigned num_inputs, const std::string& tag_key);

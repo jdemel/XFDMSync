@@ -1,7 +1,7 @@
 {
     "terminal.integrated.env.linux": {
-        "PYBOMBS_PREFIX": "${env:HOME}/prefix/pybind",
-        "PATH": "${env:PYBOMBS_PREFIX}/bin:${env:PATH}",
+        "PYBOMBS_PREFIX": "${env:HOME}/prefix/gnuradio",
+        "PATH": "${env:HOME}/prefix/gnuradio/bin:${env:PATH}",
         "PYTHONPATH": "${env:HOME}/prefix/gnuradio/lib/python3.8/site-packages:${env:HOME}/prefix/gnuradio/lib/python3/dist-packages:${env:PYTHONPATH}",
         "LD_LIBRARY_PATH": "${env:HOME}/prefix/gnuradio/lib:${env:LD_LIBRARY_PATH}",
         "LIBRARY_PATH": "${env:HOME}/prefix/gnuradio/lib:${env:LIBRARY_PATH}",
@@ -9,6 +9,7 @@
     },
     "telemetry.enableTelemetry": false,
     "terminal.integrated.shell.linux": "zsh",
+    // "terminal.integrated.fontFamily": "Meslo LG M DZ for Powerline",
 
     "cmake.installPrefix": "${userHome}/prefix/gnuradio",
     "cmake.environment": {
@@ -85,7 +86,10 @@
         "cfenv": "cpp",
         "cinttypes": "cpp",
         "typeindex": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp",
+        "valarray": "cpp"
     },
     "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
     "python.formatting.provider": "black"
