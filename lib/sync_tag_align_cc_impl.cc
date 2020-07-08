@@ -83,7 +83,7 @@ int sync_tag_align_cc_impl::work(int noutput_items,
             done = false;
             found_tags = true;
             std::sort(stream_input_tags[i].begin(),
-                      stream_input_tags[i].begin(),
+                      stream_input_tags[i].end(),
                       tag_t::offset_compare);
             d_inport_tag_counters[i] += stream_input_tags[i].size();
             // num_tags = stream_input_tags[i].size();
@@ -135,7 +135,6 @@ int sync_tag_align_cc_impl::work(int noutput_items,
                     share_tag.value, pmt::mp("xcorr_idx"), pmt::from_uint64(0)));
                 GR_LOG_DEBUG(d_logger,
                              "Add tag with offset=" + std::to_string(share_tag.offset) +
-                                 " co=" + std::to_string(t_offset) +
                                  " in stream: " + std::to_string(i) +
                                  " share_stream: " + std::to_string(share_tag_stream) +
                                  " share_pos: " + std::to_string(share_tag_pos) +
