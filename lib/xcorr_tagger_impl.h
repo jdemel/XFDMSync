@@ -84,6 +84,7 @@ private:
     uint64_t d_peak_idx = 0;
     uint64_t d_last_xcorr_tag_offset = 0;
     uint64_t d_last_sc_tag_offset = 0;
+    const uint64_t d_minimum_tag_offset_distance = 2;
     const bool d_use_sc_rot;
 
     const float d_reference_preamble_energy;

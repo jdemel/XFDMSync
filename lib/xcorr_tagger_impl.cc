@@ -316,7 +316,7 @@ int xcorr_tagger_impl::work(int noutput_items,
                                  "nout=" + std::to_string(noutput_items));
             }
             const uint64_t peak_offset = std::max(raw_peak_offset, nitems_read(0));
-            if (peak_offset <= d_last_xcorr_tag_offset) {
+            if (peak_offset <= d_last_xcorr_tag_offset + d_minimum_tag_offset_distance) {
                 continue;
             }
             d_last_xcorr_tag_offset = peak_offset;

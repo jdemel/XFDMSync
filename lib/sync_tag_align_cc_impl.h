@@ -24,6 +24,12 @@ private:
     std::vector<uint64_t> d_port_tag_counters;
     std::vector<uint64_t> d_inport_tag_counters;
     std::vector<uint64_t> d_added_port_tag_counters;
+    std::vector<uint64_t> d_last_offset_in_stream;
+
+    size_t get_tags_all_streams(std::vector<std::vector<gr::tag_t>>& stream_input_tags,
+                                const int noutput_items);
+    bool check_synchronicity(const std::vector<std::vector<gr::tag_t>>& stream_input_tags,
+                             const size_t max_stream_tags) const;
 
 public:
     sync_tag_align_cc_impl(const unsigned num_inputs, const std::string& tag_key);
