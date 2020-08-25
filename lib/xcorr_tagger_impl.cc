@@ -25,6 +25,7 @@
 #include "xcorr_tagger_impl.h"
 #include <gnuradio/io_signature.h>
 #include <volk/volk.h>
+#include <algorithm>
 
 namespace gr {
 namespace xfdm_sync {
@@ -237,6 +238,9 @@ int xcorr_tagger_impl::work(int noutput_items,
                             gr_vector_const_void_star& input_items,
                             gr_vector_void_star& output_items)
 {
+    // GR_LOG_DEBUG(d_logger,
+    //              "noutput_items=" + std::to_string(noutput_items) +
+    //                  "\tnitems_read=" + std::to_string(nitems_read(0)));
     const gr_complex* in_pass_history = (const gr_complex*)input_items[0];
     const gr_complex* in_corr_history = (const gr_complex*)input_items[1];
     gr_complex* out_pass = (gr_complex*)output_items[0];
@@ -270,7 +274,8 @@ int xcorr_tagger_impl::work(int noutput_items,
         const uint64_t buffer_tag_offset = tag.offset - nitems_read(0);
         if ((int64_t)buffer_tag_offset >
             (int64_t)(noutput_items - (int64_t)three_quarter_fft_len)) {
-            noutput_items = buffer_tag_offset - half_fft_len;
+            noutput_items =
+                std::max((int64_t)buffer_tag_offset - (int64_t)half_fft_len, 0l);
             break;
         }
         d_last_sc_tag_offset = tag.offset;
@@ -345,6 +350,7 @@ int xcorr_tagger_impl::work(int noutput_items,
             add_item_tag(0, t);
         }
     }
+    // GR_LOG_DEBUG(d_logger, "RETURN noutput_items=" + std::to_string(noutput_items));
     return noutput_items;
 }
 } // namespace xfdm_sync
