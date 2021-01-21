@@ -47,8 +47,8 @@ private:
     const int d_sync_sequence_td_len;
     const volk::vector<gr_complex> d_sync_sequence_td;
     volk::vector<gr_complex> d_sync_sequence_fd;
-    std::unique_ptr<gr::fft::fft_complex> d_fft_fwd;
-    std::unique_ptr<gr::fft::fft_complex> d_fft_rwd;
+    std::unique_ptr<gr::fft::fft_complex_fwd> d_fft_fwd;
+    std::unique_ptr<gr::fft::fft_complex_rev> d_fft_rwd;
     void fill_fft_input(gr_complex* target,
                         const gr_complex* source,
                         const gr_complex phase_rotation);

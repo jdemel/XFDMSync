@@ -44,10 +44,10 @@ awoseyila_sync_cross_correlator::awoseyila_sync_cross_correlator(
     : d_sync_sequence_td_len(sync_sequence.size()),
       d_sync_sequence_td(sync_sequence.begin(), sync_sequence.end()),
       d_sync_sequence_fd(calculate_fft_length(sync_sequence.size())),
-      d_fft_fwd(std::make_unique<gr::fft::fft_complex>(
-          calculate_fft_length(sync_sequence.size()), true, 1)),
-      d_fft_rwd(std::make_unique<gr::fft::fft_complex>(
-          calculate_fft_length(sync_sequence.size()), false, 1))
+      d_fft_fwd(std::make_unique<gr::fft::fft_complex_fwd>(
+          calculate_fft_length(sync_sequence.size()), 1)),
+      d_fft_rwd(std::make_unique<gr::fft::fft_complex_rev>(
+          calculate_fft_length(sync_sequence.size()), 1))
 {
     /* Transform the reference sequence to the frequency
      * domain for fast crosscorrelation later */
