@@ -206,16 +206,16 @@ int sync_tag_align_cc_impl::work(int noutput_items,
                     (d_last_offset_in_stream[i] < share_tag.offset)
                         ? share_tag.offset
                         : d_last_offset_in_stream[i] + 1;
-                        /*
-                GR_LOG_DEBUG(d_logger,
-                             std::to_string(nitems_read(0)) +
-                                 " Add tag with offset=" + std::to_string(next_offset) +
-                                 " in stream: " + std::to_string(i) +
-                                 " share_stream: " + std::to_string(share_tag_stream) +
-                                 " share_pos: " + std::to_string(share_tag_pos) +
-                                 " xcorr_idx: " + std::to_string(xcorr_idx) +
-                                 "\t#tags=" + pst);
-                */
+
+                // GR_LOG_DEBUG(d_logger,
+                //              std::to_string(nitems_read(0)) +
+                //                  " Add tag with offset=" + std::to_string(next_offset)
+                //                  + " in stream: " + std::to_string(i) + " share_stream:
+                //                  " + std::to_string(share_tag_stream) + " share_pos: "
+                //                  + std::to_string(share_tag_pos) + " xcorr_idx: " +
+                //                  std::to_string(xcorr_idx) +
+                //                  "\t#tags=" + pst);
+
                 add_item_tag(i,
                              next_offset,
                              share_tag.key,
