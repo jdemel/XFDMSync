@@ -107,10 +107,10 @@ bool sync_tag_align_cc_impl::check_synchronicity(
 
                     stream++;
                 }
-                GR_LOG_DEBUG(d_logger,
-                             "Async " + std::to_string(i) + "/" +
-                                 std::to_string(max_stream_tags) +
-                                 " offsets: " + offset_str);
+                // GR_LOG_DEBUG(d_logger,
+                //              "Async " + std::to_string(i) + "/" +
+                //                  std::to_string(max_stream_tags) +
+                //                  " offsets: " + offset_str);
                 return false;
             }
         }
@@ -156,9 +156,9 @@ int sync_tag_align_cc_impl::work(int noutput_items,
 
         stream++;
     }
-    GR_LOG_DEBUG(d_logger,
-                 std::to_string(nitems_read(0)) + " Async " +
-                     std::to_string(max_stream_tags) + " offsets: " + offset_str);
+    // GR_LOG_DEBUG(d_logger,
+    //              std::to_string(nitems_read(0)) + " Async " +
+    //                  std::to_string(max_stream_tags) + " offsets: " + offset_str);
 
     bool done = max_stream_tags == 0;
 
