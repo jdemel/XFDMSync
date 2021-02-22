@@ -23,5 +23,6 @@ install(FILES
     xfdm_sync_sc_delay_corr.block.yml
     xfdm_sync_sc_tagger.block.yml
     xfdm_sync_xcorr_tagger.block.yml
-    xfdm_sync_sync_tag_align_cc.block.yml DESTINATION share/gnuradio/grc/blocks
+    xfdm_sync_sync_tag_align_cc.block.yml
+    xfdm_sync_sync_cc.block.yml DESTINATION share/gnuradio/grc/blocks
 )

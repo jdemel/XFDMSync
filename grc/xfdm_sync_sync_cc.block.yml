@@ -1,0 +1,63 @@
+id: xfdm_sync_sync_cc
+label: Synchronization
+category: "[xfdm_sync]"
+
+templates:
+  imports: import xfdm_sync
+  make: xfdm_sync.sync_cc(${preamble}, ${scorr_threshold_high}, ${scorr_threshold_low}, ${scorr_normalize}, ${xcorr_threshold}, ${xcorr_compensate_freq_offset}, ${sync_tag_key})
+  callbacks:
+    - set_scorr_threshold_high(${scorr_threshold_high})
+    - set_scorr_threshold_low(${scorr_threshold_low})
+    - set_xcorr_threshold(${xcorr_threshold})
+
+parameters:
+  - id: preamble
+    label: Preamble
+    dtype: complex_vector
+    default: "[1.0 + 0.0j, ] * 128"
+  - id: scorr_threshold_high
+    label: SCorr threshold high
+    dtype: float
+    default: 0.98
+  - id: scorr_threshold_low
+    label: SCorr threshold low
+    dtype: float
+    default: 0.93
+  - id: scorr_normalize
+    label: SCorr normalize
+    dtype: bool
+    default: True
+  - id: xcorr_threshold
+    label: XCorr threshold
+    dtype: float
+    default: 30.0
+  - id: xcorr_compensate_freq_offset
+    label: XCorr compensate freq. offset
+    dtype: bool
+    default: True
+  - id: sync_tag_key
+    label: Tag key
+    dtype: string
+    default: '"frame_start"'
+
+inputs:
+  - domain: stream
+    dtype: complex
+
+outputs:
+  - domain: stream
+    dtype: complex
+  - label: xcorr
+    domain: stream
+    dtype: complex
+    optional: true
+  - label: scout
+    domain: stream
+    dtype: complex
+    optional: true
+  - label: scorr
+    domain: stream
+    dtype: complex
+    optional: true
+
+file_format: 1
